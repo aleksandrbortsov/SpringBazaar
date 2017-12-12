@@ -8,10 +8,22 @@ import java.util.List;
 @Entity
 @Table(name = "sb_persons")
 public class Person implements Serializable {
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private BigInteger id;
+
+    @OneToOne(cascade = CascadeType.ALL)
     private User user;
+
+    @Embedded
+    @AttributeOverrides(value = {
+            @AttributeOverride(name = "firstName", column = @Column(name = "first_name")),
+            @AttributeOverride(name = "middleName", column = @Column(name = "middle_name")),
+            @AttributeOverride(name = "lastName", column = @Column(name = "last_name"))
+    })
     private Name name;
+
+    @OneToMany(mappedBy = "id", cascade = CascadeType.ALL)
     private List<Product> products;
 
     public Person() {
@@ -24,8 +36,7 @@ public class Person implements Serializable {
         this.products = products;
     }
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     public BigInteger getId() {
         return id;
     }
@@ -34,8 +45,6 @@ public class Person implements Serializable {
         this.id = id;
     }
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @PrimaryKeyJoinColumn
     public User getUser() {
         return user;
     }
@@ -52,7 +61,6 @@ public class Person implements Serializable {
         this.name = name;
     }
 
-    @OneToMany(mappedBy = "id", cascade = CascadeType.ALL)
     public List<Product> getProducts() {
         return products;
     }

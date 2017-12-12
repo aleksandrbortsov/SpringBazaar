@@ -11,7 +11,9 @@ public class Role implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private BigInteger id;
+
     private String name;
+
     @OneToMany(mappedBy = "role", cascade = CascadeType.ALL)
     @Column(name = "user_id")
     private List<User> users;
@@ -19,8 +21,8 @@ public class Role implements Serializable {
     public Role() {
     }
 
-    public Role(List<User> users) {
-        this.users = users;
+    public Role(String name) {
+        this.name = name;
     }
 
     public List<User> getUsers() {

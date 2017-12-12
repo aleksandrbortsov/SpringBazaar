@@ -3,28 +3,28 @@ package com.springbazaar.domain;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 @Entity
 @Table(name = "sb_products")
 public class Product implements Serializable {
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private BigInteger id;
     private String description;
     private BigDecimal price;
     private String imageUrl;
-    @Column(name = "user_id")
-    private User user;
+    @Column(name = "person_id")
+    private Person person;
 
     public Product() {
     }
 
-    public Long getId() {
+    public BigInteger getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(BigInteger id) {
         this.id = id;
     }
 
@@ -52,11 +52,11 @@ public class Product implements Serializable {
         this.imageUrl = imageUrl;
     }
 
-    public User getUser() {
-        return user;
+    public Person getPerson() {
+        return person;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setPerson(Person person) {
+        this.person = person;
     }
 }

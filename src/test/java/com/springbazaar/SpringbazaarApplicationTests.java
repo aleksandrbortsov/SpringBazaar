@@ -1,4 +1,4 @@
-package com.springbazaar.SpringBazaar;
+package com.springbazaar;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -7,7 +7,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class SpringBazaarApplicationTests {
+public class SpringbazaarApplicationTests {
 
 	@Test
 	public void contextLoads() {

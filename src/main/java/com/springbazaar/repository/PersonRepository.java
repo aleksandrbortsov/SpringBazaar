@@ -1,9 +1,9 @@
 package com.springbazaar.repository;
 
-import com.springbazaar.domain.User;
+import com.springbazaar.domain.Person;
 import org.springframework.data.repository.CrudRepository;
 
 import java.math.BigInteger;
 
-public interface UserRepository extends CrudRepository<User, BigInteger> {
+public interface PersonRepository extends CrudRepository<Person, BigInteger> {
 }

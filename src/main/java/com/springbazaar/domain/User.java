@@ -3,23 +3,41 @@ package com.springbazaar.domain;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigInteger;
-import java.util.List;
 
 @Entity
 @Table(name = "sb_users")
 public class User implements Serializable {
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private BigInteger id;
+
+    @Column(unique = true, nullable = false)
     private String login;
+
+    @Column(unique = true, nullable = false)
     private String password;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "role_id", nullable = false)
     private Role role;
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Person person;
 
 
     public User() {
     }
 
-    public User(BigInteger id, String login, String password, Role role, Person person, List<Product> products) {
+    @Override
+    public String toString() {
+        return "User {id = " + getId()
+                + ", login = " + getLogin()
+                + ", role = " + getRole()
+                + ", persona = " + getPerson()
+                + "}";
+    }
+
+    public User(BigInteger id, String login, String password, Role role, Person person) {
         this.id = id;
         this.login = login;
         this.password = password;
@@ -27,8 +45,7 @@ public class User implements Serializable {
         this.person = person;
     }
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     public BigInteger getId() {
         return id;
     }
@@ -37,7 +54,6 @@ public class User implements Serializable {
         this.id = id;
     }
 
-    @Column(unique = true, nullable = false)
     public String getLogin() {
         return login;
     }
@@ -46,7 +62,6 @@ public class User implements Serializable {
         this.login = login;
     }
 
-    @Column(unique = true, nullable = false)
     public String getPassword() {
         return password;
     }
@@ -55,9 +70,6 @@ public class User implements Serializable {
         this.password = password;
     }
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    @Column(name = "role_id", unique = true, nullable = false)
     public Role getRole() {
         return role;
     }
@@ -66,7 +78,6 @@ public class User implements Serializable {
         this.role = role;
     }
 
-    @OneToOne(mappedBy = "sb_users", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     public Person getPerson() {
         return person;
     }
