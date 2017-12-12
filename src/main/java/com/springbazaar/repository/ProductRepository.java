@@ -5,5 +5,5 @@ import org.springframework.data.repository.CrudRepository;
 
 import java.math.BigInteger;
 
-public interface ProductRepository extends CrudRepository<Product, BigInteger> {
+public interface ProductRepository extends CrudRepository<Product, BigInteger>, ProductRepositoryCustom {
 }
