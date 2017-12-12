@@ -1,12 +1,13 @@
 package com.springbazaar.domain;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.List;
 
 @Entity
 @Table(name = "sb_roles")
-public class Role {
+public class Role implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private BigInteger id;

@@ -2,9 +2,10 @@ package com.springbazaar.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import java.io.Serializable;
 
 @Embeddable
-public class Name {
+public class Name implements Serializable {
     @Column(name = "first_name")
     private String firstName;
 

@@ -8,26 +8,27 @@ import java.util.List;
 @Entity
 @Table(name = "sb_users")
 public class User implements Serializable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+
     private BigInteger id;
-
     private String login;
-
     private String password;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    @Column(name = "role_id")
     private Role role;
+    private Person person;
 
-    private Name name;
-    @OneToMany(mappedBy = "id", cascade = CascadeType.ALL)
-    private List<Product> products;
 
     public User() {
     }
 
+    public User(BigInteger id, String login, String password, Role role, Person person, List<Product> products) {
+        this.id = id;
+        this.login = login;
+        this.password = password;
+        this.role = role;
+        this.person = person;
+    }
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public BigInteger getId() {
         return id;
     }
@@ -36,6 +37,7 @@ public class User implements Serializable {
         this.id = id;
     }
 
+    @Column(unique = true, nullable = false)
     public String getLogin() {
         return login;
     }
@@ -44,6 +46,7 @@ public class User implements Serializable {
         this.login = login;
     }
 
+    @Column(unique = true, nullable = false)
     public String getPassword() {
         return password;
     }
@@ -52,6 +55,9 @@ public class User implements Serializable {
         this.password = password;
     }
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    @Column(name = "role_id", unique = true, nullable = false)
     public Role getRole() {
         return role;
     }
@@ -60,21 +66,12 @@ public class User implements Serializable {
         this.role = role;
     }
 
-    public Name getName() {
-        return name;
+    @OneToOne(mappedBy = "sb_users", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    public Person getPerson() {
+        return person;
     }
 
-    public void setName(Name name) {
-        this.name = name;
+    public void setPerson(Person person) {
+        this.person = person;
     }
-
-    public List<Product> getProducts() {
-        return products;
-    }
-
-    public void setProducts(List<Product> products) {
-        this.products = products;
-    }
-
-
 }
