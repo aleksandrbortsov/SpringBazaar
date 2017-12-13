@@ -20,8 +20,8 @@ import java.util.Arrays;
 import static java.lang.System.exit;
 
 @Component
-public class LineRunner implements CommandLineRunner {
-    public static final Logger LOGGER = LoggerFactory.getLogger(LineRunner.class);
+public class ApplicationCommandLineRunner implements CommandLineRunner {
+    public static final Logger LOGGER = LoggerFactory.getLogger(ApplicationCommandLineRunner.class);
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -41,6 +41,9 @@ public class LineRunner implements CommandLineRunner {
     @Override
     public void run(String... args) {
 //        inspectLoadedBeans();
+
+        System.out.println("DataSource = " + dataSource);
+
         Role role = new Role("test");
         roleRepository.save(role);
         System.out.println("added role = " + role);
