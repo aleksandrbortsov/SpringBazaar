@@ -1,26 +1,26 @@
 package com.springbazaar.controller;
 
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import com.springbazaar.domain.User;
+import com.springbazaar.service.UserService;
+import com.vaadin.spring.annotation.SpringComponent;
+import com.vaadin.spring.annotation.UIScope;
+import org.springframework.beans.factory.annotation.Autowired;
 
-@RestController
+@SpringComponent
+@UIScope
 public class UserController {
 
-    @RequestMapping("/")
-    public String redirectToList(){
-        return "redirect:/register/user_form";
+
+    private UserService userService;
+
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
-    @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public String saveOrUpdateProduct(BindingResult bindingResult){
+    public String saveOrUpdateUser(User user) {
 
-        if(bindingResult.hasErrors()){
-            return "register/user_form";
-        }
-
-//        Product savedProduct = productService.saveOrUpdateProductForm(productForm);
+        User savedUser = userService.saveOrUpdate(user);
 
         return "redirect:/register/show/";
     }

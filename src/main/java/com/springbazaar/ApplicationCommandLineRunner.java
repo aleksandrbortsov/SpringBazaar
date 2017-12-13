@@ -13,14 +13,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
 import java.util.Arrays;
 
-import static java.lang.System.exit;
-
-@Component
+//@Component
 public class ApplicationCommandLineRunner implements CommandLineRunner {
     public static final Logger LOGGER = LoggerFactory.getLogger(ApplicationCommandLineRunner.class);
     @Autowired
@@ -66,22 +63,8 @@ public class ApplicationCommandLineRunner implements CommandLineRunner {
         userRepository.delete(newUser.getId());
         System.out.println("deleted person = " + newPerson.getFullName());
 
-//        System.out.println("User has been added, id = " + newUser.getId());
-
-
-//        personRepository.save(newPerson);
-//        System.out.println("newPerson = " + newPerson);
-
-
-//        userService.delete(newUser);
-//        System.out.println("User has been deleted, id = " + newUser.getId());
-//        System.out.println("\n1.findAll()...");
-//        for (Person role : personRepository.findAll()) {
-//            System.out.println(role);
-//        }
-
         System.out.println("Done!");
-        exit(0);
+//        exit(0);
     }
 
     private void inspectLoadedBeans() {
