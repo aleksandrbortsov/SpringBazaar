@@ -21,7 +21,7 @@ public class Person implements Serializable {
             @AttributeOverride(name = "middleName", column = @Column(name = "middle_name")),
             @AttributeOverride(name = "lastName", column = @Column(name = "last_name"))
     })
-    private Name name;
+    private FullName fullName;
 
     @OneToMany(mappedBy = "id", cascade = CascadeType.ALL)
     private List<Product> products;
@@ -29,10 +29,9 @@ public class Person implements Serializable {
     public Person() {
     }
 
-    public Person(BigInteger id, User user, Name name, List<Product> products) {
-        this.id = id;
+    public Person(User user, FullName fullName, List<Product> products) {
         this.user = user;
-        this.name = name;
+        this.fullName = fullName;
         this.products = products;
     }
 
@@ -53,12 +52,12 @@ public class Person implements Serializable {
         this.user = user;
     }
 
-    public Name getName() {
-        return name;
+    public FullName getFullName() {
+        return fullName;
     }
 
-    public void setName(Name name) {
-        this.name = name;
+    public void setFullName(FullName fullName) {
+        this.fullName = fullName;
     }
 
     public List<Product> getProducts() {
@@ -69,4 +68,12 @@ public class Person implements Serializable {
         this.products = products;
     }
 
+    @Override
+    public String toString() {
+        return "Person {ID = " + getId()
+                + ", Full name = " + getFullName()
+                + ", Login = " + getUser().getLogin()
+                + ", Products = " + getProducts()
+                + "}";
+    }
 }

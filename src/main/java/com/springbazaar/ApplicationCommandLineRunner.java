@@ -1,10 +1,12 @@
 package com.springbazaar;
 
+import com.springbazaar.domain.FullName;
 import com.springbazaar.domain.Person;
 import com.springbazaar.domain.Role;
 import com.springbazaar.domain.User;
 import com.springbazaar.repository.PersonRepository;
 import com.springbazaar.repository.RoleRepository;
+import com.springbazaar.repository.UserRepository;
 import com.springbazaar.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +16,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
-import java.math.BigInteger;
 import java.util.Arrays;
 
 import static java.lang.System.exit;
@@ -22,21 +23,18 @@ import static java.lang.System.exit;
 @Component
 public class ApplicationCommandLineRunner implements CommandLineRunner {
     public static final Logger LOGGER = LoggerFactory.getLogger(ApplicationCommandLineRunner.class);
-
-    @Autowired
-    private ApplicationContext applicationContext;
-
     @Autowired
     DataSource dataSource;
-
     @Autowired
     RoleRepository roleRepository;
-
     @Autowired
     UserService userService;
-
+    @Autowired
+    UserRepository userRepository;
     @Autowired
     PersonRepository personRepository;
+    @Autowired
+    private ApplicationContext applicationContext;
 
     @Override
     public void run(String... args) {
@@ -44,25 +42,39 @@ public class ApplicationCommandLineRunner implements CommandLineRunner {
 
         System.out.println("DataSource = " + dataSource);
 
-        Role role = new Role("test");
-        roleRepository.save(role);
-        System.out.println("added role = " + role);
+        Role sellerRole = roleRepository.findByName("seller");
+        if (sellerRole == null) {
+            sellerRole = new Role("seller");
+        }
 
-        roleRepository.delete(role.getId());
-        System.out.println("deleted role = " + role);
+        FullName personFullName = new FullName("Petr", "Petrovich", "Petrov");
+        Person newPerson = new Person();
+        newPerson.setFullName(personFullName);
 
-        Role sellerRole = roleRepository.findOne(new BigInteger("1"));
-        User user = new User();
-        user.setLogin("Ivan");
-        user.setPassword("123");
-//        user.setRole(sellerRole);
-        Person person = personRepository.findOne(new BigInteger("1"));
-        user.setPerson(person);
-        userService.saveOrUpdate(user);
-        System.out.println("User has been added, id = " + user.getId());
+        User newUser = new User();
+        newUser.setLogin("Ivan");
+        newUser.setPassword("123");
+        newPerson.setUser(newUser);
+        newUser.setPerson(newPerson);
+        personRepository.save(newPerson);
+        newUser.setRole(sellerRole);
+        userService.saveOrUpdate(newUser);
 
-        userService.delete(user);
-        System.out.println("User has been deleted, id = " + user.getId());
+
+//        roleRepository.delete(sellerRole.getId());
+//        personRepository.delete(newPerson.getId());
+        userRepository.delete(newUser.getId());
+        System.out.println("deleted person = " + newPerson.getFullName());
+
+//        System.out.println("User has been added, id = " + newUser.getId());
+
+
+//        personRepository.save(newPerson);
+//        System.out.println("newPerson = " + newPerson);
+
+
+//        userService.delete(newUser);
+//        System.out.println("User has been deleted, id = " + newUser.getId());
 //        System.out.println("\n1.findAll()...");
 //        for (Person role : personRepository.findAll()) {
 //            System.out.println(role);
@@ -80,7 +92,7 @@ public class ApplicationCommandLineRunner implements CommandLineRunner {
         Arrays.sort(beanNames);
         for (String beanName : beanNames) {
             LOGGER.debug(beanName);
-            System.out.println("Bean Name = " + beanName);
+            System.out.println("Bean FullName = " + beanName);
         }
     }
 }

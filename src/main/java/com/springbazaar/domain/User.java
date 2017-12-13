@@ -17,28 +17,17 @@ public class User implements Serializable {
     @Column(unique = true, nullable = false)
     private String password;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "role_id", nullable = false)
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "role_id")
     private Role role;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL)
     private Person person;
-
 
     public User() {
     }
 
-    @Override
-    public String toString() {
-        return "User {id = " + getId()
-                + ", login = " + getLogin()
-                + ", role = " + getRole()
-                + ", persona = " + getPerson()
-                + "}";
-    }
-
-    public User(BigInteger id, String login, String password, Role role, Person person) {
-        this.id = id;
+    public User(String login, String password, Role role, Person person) {
         this.login = login;
         this.password = password;
         this.role = role;
@@ -84,5 +73,14 @@ public class User implements Serializable {
 
     public void setPerson(Person person) {
         this.person = person;
+    }
+
+    @Override
+    public String toString() {
+        return "User {ID = " + getId()
+                + ", Login = " + getLogin()
+                + ", Role = " + getRole().getName()
+                + ", Person = " + getPerson()
+                + "}";
     }
 }

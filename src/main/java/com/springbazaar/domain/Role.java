@@ -12,10 +12,10 @@ public class Role implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private BigInteger id;
 
+    @Column(unique = true, nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL)
-    @Column(name = "user_id")
+    @OneToMany(mappedBy = "role", fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
     private List<User> users;
 
     public Role() {
@@ -23,6 +23,11 @@ public class Role implements Serializable {
 
     public Role(String name) {
         this.name = name;
+    }
+
+    public Role(String name, List<User> users) {
+        this.name = name;
+        this.users = users;
     }
 
     public List<User> getUsers() {
