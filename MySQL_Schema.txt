@@ -12,7 +12,6 @@ CREATE TABLE `spring_bazaar`.`sb_users` (
   CREATE TABLE `spring_bazaar`.`sb_roles` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NOT NULL,
-  `user_id` INT NULL,
   PRIMARY KEY (`id`));
 
   DROP TABLE IF EXISTS `spring_bazaar`.`sb_persons`;

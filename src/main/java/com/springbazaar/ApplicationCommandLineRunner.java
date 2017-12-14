@@ -17,6 +17,8 @@ import org.springframework.context.ApplicationContext;
 import javax.sql.DataSource;
 import java.util.Arrays;
 
+import static java.lang.System.exit;
+
 //@Component
 public class ApplicationCommandLineRunner implements CommandLineRunner {
     public static final Logger LOGGER = LoggerFactory.getLogger(ApplicationCommandLineRunner.class);
@@ -39,32 +41,8 @@ public class ApplicationCommandLineRunner implements CommandLineRunner {
 
         System.out.println("DataSource = " + dataSource);
 
-        Role sellerRole = roleRepository.findByName("seller");
-        if (sellerRole == null) {
-            sellerRole = new Role("seller");
-        }
-
-        FullName personFullName = new FullName("Petr", "Petrovich", "Petrov");
-        Person newPerson = new Person();
-        newPerson.setFullName(personFullName);
-
-        User newUser = new User();
-        newUser.setLogin("Ivan");
-        newUser.setPassword("123");
-        newPerson.setUser(newUser);
-        newUser.setPerson(newPerson);
-        personRepository.save(newPerson);
-        newUser.setRole(sellerRole);
-        userService.saveOrUpdate(newUser);
-
-
-//        roleRepository.delete(sellerRole.getId());
-//        personRepository.delete(newPerson.getId());
-        userRepository.delete(newUser.getId());
-        System.out.println("deleted person = " + newPerson.getFullName());
-
         System.out.println("Done!");
-//        exit(0);
+        exit(0);
     }
 
     private void inspectLoadedBeans() {

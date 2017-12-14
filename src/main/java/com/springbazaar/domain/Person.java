@@ -35,6 +35,9 @@ public class Person implements Serializable {
         this.products = products;
     }
 
+    public Person(FullName fullName) {
+        this.fullName = fullName;
+    }
 
     public BigInteger getId() {
         return id;
@@ -58,6 +61,10 @@ public class Person implements Serializable {
 
     public void setFullName(FullName fullName) {
         this.fullName = fullName;
+    }
+
+    public String getShortName() {
+        return getFullName().getFirstName() + " " + getFullName().getMiddleName();
     }
 
     public List<Product> getProducts() {
