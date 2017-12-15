@@ -1,5 +1,7 @@
 package com.springbazaar.domain;
 
+import org.apache.commons.lang3.StringUtils;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigInteger;
@@ -23,7 +25,12 @@ public class Person implements Serializable {
     })
     private FullName fullName;
 
-    @OneToMany(mappedBy = "id", cascade = CascadeType.ALL)
+    //TODO see into @Email/@NotEmpty
+//    @Email(message = "*Please provide a valid email")
+//    @NotEmpty(message = "*Please provide an email")
+    private String email;
+
+    @OneToMany(mappedBy = "id", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Product> products;
 
     public Person() {
@@ -75,12 +82,28 @@ public class Person implements Serializable {
         this.products = products;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    //TODO equals , hashCode, toString methods
     @Override
     public String toString() {
-        return "Person {ID = " + getId()
-                + ", Full name = " + getFullName()
-                + ", Login = " + getUser().getLogin()
-                + ", Products = " + getProducts()
-                + "}";
+        StringBuilder stringBuilder = new StringBuilder("Person");
+        stringBuilder.append("{ID = ").append(id);
+        stringBuilder.append(", Full name = ").append(fullName);
+        if (StringUtils.isNotEmpty(email) && email.equals(user.getUsername())) {
+            stringBuilder.append(", Username/Email = ").append(user.getUsername());
+        } else {
+            stringBuilder.append(", Username = ").append(user.getUsername());
+            stringBuilder.append(", Email = ").append(email);
+        }
+        stringBuilder.append(", Products = {").append(getProducts()).append("}");
+        stringBuilder.append("}");
+        return String.valueOf(stringBuilder);
     }
 }

@@ -59,4 +59,6 @@ public class Product implements Serializable {
     public void setPerson(Person person) {
         this.person = person;
     }
+
+    //TODO equals , hashCode, toString methods
 }

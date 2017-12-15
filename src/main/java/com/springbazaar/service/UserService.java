@@ -8,7 +8,7 @@ public interface UserService {
 
     User saveOrUpdate(User user);
 
-    User getById(BigInteger id);
+    User getUserById(BigInteger id);
 
     void delete(User user);
 }

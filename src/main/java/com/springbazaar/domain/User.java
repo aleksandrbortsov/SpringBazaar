@@ -1,41 +1,58 @@
 package com.springbazaar.domain;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotEmpty;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigInteger;
+import java.util.Set;
 
 @Entity
-@Table(name = "sb_users")
+@Table(name = "SB_USERS")
 public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private BigInteger id;
 
     @Column(unique = true, nullable = false)
-    private String login;
+    //TODO see into @Email/@NotEmpty
+//    @Email(message = "*Please provide a valid email")
+//    @NotEmpty(message = "*Please provide an email")
+    private String username;
 
     @Column(unique = true, nullable = false)
+//    @Length(min = 5, message = "*Your password must have at least 5 characters")
+//    @NotEmpty(message = "*Please provide your password")
+    @Transient
     private String password;
 
-    @ManyToOne(cascade = CascadeType.MERGE)
-    @JoinColumn(name = "role_id")
-    private Role role;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "SB_USERS_ROLES",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
+    private Set<Role> roles;
 
     @OneToOne(cascade = CascadeType.ALL)
     private Person person;
 
+    //TODO add fields
+    private boolean state;
+
     public User() {
     }
 
-    public User(String login, String password) {
-        this.login = login;
+    public User(String username, String password) {
+        this.username = username;
         this.password = password;
     }
 
-    public User(String login, String password, Role role, Person person) {
-        this.login = login;
+    public User(String username, String password, Set<Role> roles, Person person) {
+        this.username = username;
         this.password = password;
-        this.role = role;
+        this.roles = roles;
         this.person = person;
     }
 
@@ -48,12 +65,12 @@ public class User implements Serializable {
         this.id = id;
     }
 
-    public String getLogin() {
-        return login;
+    public String getUsername() {
+        return username;
     }
 
-    public void setLogin(String login) {
-        this.login = login;
+    public void setUsername(String userName) {
+        this.username = userName;
     }
 
     public String getPassword() {
@@ -64,12 +81,12 @@ public class User implements Serializable {
         this.password = password;
     }
 
-    public Role getRole() {
-        return role;
+    public Set<Role> getRoles() {
+        return roles;
     }
 
-    public void setRole(Role role) {
-        this.role = role;
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 
     public Person getPerson() {
@@ -79,12 +96,12 @@ public class User implements Serializable {
     public void setPerson(Person person) {
         this.person = person;
     }
-
+    //TODO equals , hashCode, toString methods
     @Override
     public String toString() {
         return "User {ID = " + getId()
-                + ", Login = " + getLogin()
-                + ", Role = " + getRole().getName()
+                + ", Username = " + getUsername()
+                + ", Role {" + getRoles() + "}"
                 + ", Person = " + getPerson()
                 + "}";
     }
