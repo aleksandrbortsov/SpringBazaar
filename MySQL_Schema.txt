@@ -1,34 +1,51 @@
 CREATE DATABASE `spring_bazaar` /*!40100 DEFAULT CHARACTER SET utf8 */;
 DROP TABLE IF EXISTS `spring_bazaar`.`sb_users`;
 CREATE TABLE `spring_bazaar`.`sb_users` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `login` VARCHAR(45) NOT NULL,
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `username` VARCHAR(45) NOT NULL,
   `password` VARCHAR(45) NULL,
-  `role_id` INT NULL,
-  `person_id` INT NULL,
+  `state` TINYINT(1) UNSIGNED NULL,
+  `group_id` INT(1) UNSIGNED NULL,
+  `person_id` INT UNSIGNED NULL,
   PRIMARY KEY (`id`));
   
   DROP TABLE IF EXISTS `spring_bazaar`.`sb_roles`;
   CREATE TABLE `spring_bazaar`.`sb_roles` (
-  `id` INT NOT NULL AUTO_INCREMENT,
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`id`));
 
+  DROP TABLE IF EXISTS `spring_bazaar`.`sb_groups`;
+  CREATE TABLE `spring_bazaar`.`sb_groups` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id`));
+  
   DROP TABLE IF EXISTS `spring_bazaar`.`sb_persons`;
   CREATE TABLE `spring_bazaar`.`sb_persons` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `user_id` INT NULL,
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `user_id` INT UNSIGNED NULL,
+  `email` VARCHAR(45) NULL,
   `first_name` VARCHAR(45) NULL,
   `middle_name` VARCHAR(45) NULL,
   `last_name` VARCHAR(45) NULL,
-  `product_id` INT NULL,
+  `product_id` INT UNSIGNED NULL,
   PRIMARY KEY (`id`));
   
   DROP TABLE IF EXISTS `spring_bazaar`.`sb_products`;
   CREATE TABLE `spring_bazaar`.`sb_products` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `description` varchar(255) DEFAULT NULL,
-  `price` decimal(10,2) DEFAULT NULL,
-  `image_url` varchar(200) DEFAULT NULL,
-  `person_id` int(11) NOT NULL,
-  PRIMARY KEY (`id`)) ;
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `description` VARCHAR(255) DEFAULT NULL,
+  `price` DECIMAL(10,2) DEFAULT NULL,
+  `image_url` VARCHAR(200) DEFAULT NULL,
+  `person_id` INT NOT NULL,
+  PRIMARY KEY (`id`));
+  
+  DROP TABLE IF EXISTS `spring_bazaar`.`sb_users_roles`;
+  CREATE TABLE `spring_bazaar`.`sb_users_roles` (
+  `user_id` INT UNSIGNED NOT NULL,
+  `role_id` INT UNSIGNED NOT NULL,
+  PRIMARY KEY (`user_id`,`role_id`),
+  KEY `fk_usersroles_role_idx` (`role_id`),
+  CONSTRAINT `fk_usersroles_user` FOREIGN KEY (`user_id`) REFERENCES `sb_users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_usersroles_role` FOREIGN KEY (`role_id`) REFERENCES `sb_roles` (`id`) ON DELETE CASCADE ON UPDATE CASCADE);
