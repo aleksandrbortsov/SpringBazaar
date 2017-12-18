@@ -1,96 +1,57 @@
 package com.springbazaar.web.view;
 
+
 import com.vaadin.annotations.Theme;
-import com.vaadin.event.ShortcutAction;
 import com.vaadin.server.VaadinRequest;
+import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.*;
-import com.vaadin.ui.themes.ValoTheme;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.AuthenticationException;
-import org.vaadin.spring.security.shared.VaadinSharedSecurity;
+import org.springframework.security.core.userdetails.UserDetailsService;
+
+import javax.annotation.Resource;
 
 @SpringUI(path = "/login")
 @Theme("valo")
 public class LoginUI extends UI {
     private static final Logger LOGGER = LoggerFactory.getLogger(LoginUI.class);
 
-    private TextField username = new TextField("Username");
-    private PasswordField passwordField = new PasswordField("Password");
-    private CheckBox rememberMe = new CheckBox("Remember me");
-    private Button loginButton = new Button("Login");
-    private Label loginFailedLabel;
-    private Label loggedOutLabel;
+    @Resource(name = "UserDetailsServiceImpl")
+    private UserDetailsService userDetailsService;
 
-    private VaadinSharedSecurity vaadinSecurity;
-
-    @Autowired
-    public LoginUI(VaadinSharedSecurity vaadinSecurity) {
-        this.vaadinSecurity = vaadinSecurity;
-    }
+    private TextField user = new TextField("User:");
+    private PasswordField password = new PasswordField("Password:");
+    private Button loginButton = new Button("Login", this::loginButtonClick);
 
     @Override
-    protected void init(VaadinRequest vaadinRequest) {
-        getPage().setTitle("Vaadin Security Demo Login");
-
-        FormLayout loginForm = new FormLayout();
-        loginForm.setSizeUndefined();
-        loginButton.addStyleName(ValoTheme.BUTTON_PRIMARY);
-        loginButton.setDisableOnClick(true);
-        loginButton.setClickShortcut(ShortcutAction.KeyCode.ENTER);
-        loginButton.addClickListener(clickEvent -> login());
-        loginForm.addComponent(username);
-        loginForm.addComponent(passwordField);
-        loginForm.addComponent(rememberMe);
-        loginForm.addComponent(loginButton);
-
-        VerticalLayout loginLayout = new VerticalLayout();
-        loginLayout.setSpacing(true);
-        loginLayout.setSizeUndefined();
-
-        if (vaadinRequest.getParameter("logout") != null) {
-            loggedOutLabel = new Label("You have been logged out!");
-            loggedOutLabel.addStyleName(ValoTheme.LABEL_SUCCESS);
-            loggedOutLabel.setSizeUndefined();
-            loginLayout.addComponent(loggedOutLabel);
-            loginLayout.setComponentAlignment(loggedOutLabel, Alignment.BOTTOM_CENTER);
-        }
-
-        loginLayout.addComponent(loginFailedLabel = new Label());
-        loginLayout.setComponentAlignment(loginFailedLabel, Alignment.BOTTOM_CENTER);
-        loginFailedLabel.setSizeUndefined();
-        loginFailedLabel.addStyleName(ValoTheme.LABEL_FAILURE);
-        loginFailedLabel.setVisible(false);
-
-        loginLayout.addComponent(loginForm);
-        loginLayout.setComponentAlignment(loginForm, Alignment.TOP_CENTER);
-
-        VerticalLayout rootLayout = new VerticalLayout(loginLayout);
-        rootLayout.setSizeFull();
-        rootLayout.setComponentAlignment(loginLayout, Alignment.MIDDLE_CENTER);
-        setContent(rootLayout);
+    protected void init(VaadinRequest request) {
         setSizeFull();
+
+        user.setWidth("300px");
+        user.setRequiredIndicatorVisible(true);
+
+        password.setWidth("300px");
+        password.setRequiredIndicatorVisible(true);
+        password.setValue("");
+
+        VerticalLayout fields = new VerticalLayout(user, password, loginButton);
+        fields.setCaption("Please login to access the application");
+        fields.setSpacing(true);
+        fields.setMargin(new MarginInfo(true, true, true, false));
+        fields.setSizeUndefined();
+
+        VerticalLayout uiLayout = new VerticalLayout(fields);
+        uiLayout.setSizeFull();
+        uiLayout.setComponentAlignment(fields, Alignment.MIDDLE_CENTER);
+        setFocusedComponent(user);
+
+        setContent(uiLayout);
     }
 
-    private void login() {
-        try {
-            vaadinSecurity.login(username.getValue(), passwordField.getValue(), rememberMe.getValue());
-        } catch (AuthenticationException ex) {
-            username.focus();
-            username.selectAll();
-            passwordField.setValue("");
-            loginFailedLabel.setValue(String.format("Login failed: %s", ex.getMessage()));
-            loginFailedLabel.setVisible(true);
-            if (loggedOutLabel != null) {
-                loggedOutLabel.setVisible(false);
-            }
-        } catch (Exception ex) {
-            Notification.show("An unexpected error occurred", ex.getMessage(), Notification.Type.ERROR_MESSAGE);
-            LOGGER.error("Unexpected error while logging in", ex);
-        } finally {
-            loginButton.setEnabled(true);
-        }
+    public void loginButtonClick(Button.ClickEvent e) {
+        //authorize/authenticate user
+        //tell spring that my user is authenticated and dispatch to my mainUI
+        userDetailsService.loadUserByUsername(user.getValue());
     }
 }

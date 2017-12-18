@@ -50,11 +50,10 @@
         </dependency>
 
         <dependency>
-            <groupId>org.vaadin.spring</groupId>
-            <artifactId>spring-boot-vaadin</artifactId>
-            <version>0.0.5.RELEASE</version>
+            <groupId>org.vaadin.spring.extensions</groupId>
+            <artifactId>vaadin-spring-ext-core</artifactId>
+            <version>2.0.0.RELEASE</version>
         </dependency>
-
 
         <dependency>
             <groupId>org.vaadin.spring.extensions</groupId>

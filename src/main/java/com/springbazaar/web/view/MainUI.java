@@ -12,7 +12,6 @@ import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.vaadin.spring.security.VaadinSecurity;
 
 import javax.annotation.PostConstruct;
 
@@ -22,7 +21,6 @@ import javax.annotation.PostConstruct;
 public class MainUI extends UI implements ViewDisplay {
 
     private final ApplicationContext applicationContext;
-    private final VaadinSecurity vaadinSecurity;
     private final SpringViewProvider springViewProvider;
     private final SpringNavigator springNavigator;
 
@@ -30,19 +28,18 @@ public class MainUI extends UI implements ViewDisplay {
 
     @Autowired
     public MainUI(ApplicationContext applicationContext,
-                  VaadinSecurity vaadinSecurity,
                   SpringViewProvider springViewProvider,
                   SpringNavigator springNavigator) {
         this.applicationContext = applicationContext;
-        this.vaadinSecurity = vaadinSecurity;
+
         this.springViewProvider = springViewProvider;
         this.springNavigator = springNavigator;
     }
 
     @PostConstruct
     public void init() {
-        springNavigator.setErrorView(ErrorView.class);
-        springViewProvider.setAccessDeniedViewClass(AccessDeniedView.class);
+//        springNavigator.setErrorView(ErrorView.class);
+//        springViewProvider.setAccessDeniedViewClass(AccessDeniedView.class);
         applicationViewDisplay = new Panel();
         applicationViewDisplay.setSizeFull();
     }
