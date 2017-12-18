@@ -1,9 +1,8 @@
 package com.springbazaar.web.view;
 
-
+import com.springbazaar.controller.UserController;
 import com.springbazaar.domain.Person;
 import com.springbazaar.domain.User;
-import com.springbazaar.service.UserService;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.*;
@@ -15,13 +14,12 @@ import javax.annotation.PostConstruct;
 public class LoginView extends MainVerticalView {
     public static final String VIEW_NAME = "";
 
-    private UserService userService;
+    private UserController userController;
 
     @Autowired
-    public LoginView(UserService userService) {
-        this.userService = userService;
+    public LoginView(UserController userController) {
+        this.userController = userController;
     }
-
 
     @PostConstruct
     void init() {
@@ -40,15 +38,15 @@ public class LoginView extends MainVerticalView {
            checkFilledMandatoryFields();
             if (!needFillFlag) {
                 User user = new User(userLogin.getValue(), userPassword.getValue());
-//                Person person = userService.check(user);
-//                if (person != null) {
-//                    Notification.show(person.getShortName() + ", welcome to Spring Bazaar!",
-//                            Notification.Type.TRAY_NOTIFICATION);
-//                } else {
-//                    Notification.show("Username/Email or Password is incorrect",
-//                            Notification.Type.ERROR_MESSAGE);
-//
-//                }
+                Person person = userController.check(user);
+                if (person != null) {
+                    Notification.show(person.getShortName() + ", welcome to Spring Bazaar!",
+                            Notification.Type.TRAY_NOTIFICATION);
+                } else {
+                    Notification.show("Username/Email or Password is incorrect",
+                            Notification.Type.ERROR_MESSAGE);
+
+                }
             }
         });
         rootLayout.addComponent(okButton);

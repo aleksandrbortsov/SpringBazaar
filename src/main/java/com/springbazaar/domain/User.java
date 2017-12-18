@@ -1,5 +1,10 @@
 package com.springbazaar.domain;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotEmpty;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigInteger;
@@ -91,7 +96,6 @@ public class User implements Serializable {
     public void setPerson(Person person) {
         this.person = person;
     }
-
     //TODO equals , hashCode, toString methods
     @Override
     public String toString() {

@@ -1,6 +1,6 @@
 package com.springbazaar.web.view;
 
-
+import com.springbazaar.controller.UserController;
 import com.springbazaar.domain.User;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
@@ -18,7 +18,8 @@ import javax.annotation.PostConstruct;
 public class NewProductView extends VerticalLayout implements View {
     public static final String VIEW_NAME = "add-new-product";
 
-
+    @Autowired
+    UserController userController;
 
     @PostConstruct
     void init() {
