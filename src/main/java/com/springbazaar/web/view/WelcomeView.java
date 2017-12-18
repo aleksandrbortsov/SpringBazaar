@@ -1,6 +1,6 @@
 package com.springbazaar.web.view;
 
-import com.springbazaar.controller.UserController;
+
 import com.springbazaar.domain.Person;
 import com.springbazaar.domain.User;
 import com.vaadin.navigator.ViewChangeListener;
@@ -14,12 +14,6 @@ import javax.annotation.PostConstruct;
 public class WelcomeView extends MainVerticalView {
     public static final String VIEW_NAME = "welcome";
 
-    private UserController userController;
-
-    @Autowired
-    public WelcomeView(UserController userController) {
-        this.userController = userController;
-    }
 
     @PostConstruct
     void init() {

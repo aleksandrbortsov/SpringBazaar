@@ -1,9 +1,9 @@
 package com.springbazaar.web.view;
 
-import com.springbazaar.controller.UserController;
 import com.springbazaar.domain.FullName;
 import com.springbazaar.domain.Person;
 import com.springbazaar.domain.User;
+import com.springbazaar.service.UserService;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.UserError;
 import com.vaadin.spring.annotation.SpringView;
@@ -17,12 +17,13 @@ import java.util.List;
 @SpringView(name = RegistrationView.VIEW_NAME)
 public class RegistrationView extends MainVerticalView {
     public static final String VIEW_NAME = "registration";
-    private final UserController userController;
+    private final UserService userService;
 
     @Autowired
-    public RegistrationView(UserController userController) {
-        this.userController = userController;
+    public RegistrationView(UserService userService) {
+        this.userService = userService;
     }
+
 
     @PostConstruct
     void init() {
@@ -72,7 +73,7 @@ public class RegistrationView extends MainVerticalView {
                 Person person = new Person(new FullName(userFirstName.getValue(),
                         userMiddleName.getValue(),
                         userLastName.getValue()));
-                userController.addNewUser(user, person, roles);
+                userService.saveOrUpdate(user, person, roles);
                 Notification.show("New User has been registered", Notification.Type.TRAY_NOTIFICATION);
                 getUI().getNavigator().navigateTo(WelcomeView.VIEW_NAME);
             }
