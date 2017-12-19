@@ -3,10 +3,13 @@ DROP TABLE IF EXISTS `spring_bazaar`.`sb_users`;
 CREATE TABLE `spring_bazaar`.`sb_users` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `username` VARCHAR(45) NOT NULL,
-  `password` VARCHAR(45) NULL,
+  `password` VARCHAR(255) NULL,
   `state` TINYINT(1) UNSIGNED NULL,
   `group_id` INT(1) UNSIGNED NULL,
   `person_id` INT UNSIGNED NULL,
+  `account_non_expired` TINYINT(1) UNSIGNED NULL DEFAULT 1,
+  `account_non_locked` TINYINT(1) UNSIGNED NULL DEFAULT 1,
+  `credentials_non_expired` TINYINT(1) UNSIGNED NULL DEFAULT 1
   PRIMARY KEY (`id`));
   
   DROP TABLE IF EXISTS `spring_bazaar`.`sb_roles`;

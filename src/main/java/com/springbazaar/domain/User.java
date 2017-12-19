@@ -1,18 +1,17 @@
 package com.springbazaar.domain;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.validator.constraints.Email;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigInteger;
+import java.util.Collection;
 import java.util.Set;
 
 @Entity
 @Table(name = "SB_USERS")
-public class User implements Serializable {
+public class User implements Serializable, UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private BigInteger id;
@@ -23,13 +22,12 @@ public class User implements Serializable {
 //    @NotEmpty(message = "*Please provide an email")
     private String username;
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
 //    @Length(min = 5, message = "*Your password must have at least 5 characters")
 //    @NotEmpty(message = "*Please provide your password")
-    @Transient
     private String password;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "SB_USERS_ROLES",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
@@ -38,8 +36,15 @@ public class User implements Serializable {
     @OneToOne(cascade = CascadeType.ALL)
     private Person person;
 
-    //TODO add fields
-    private boolean state;
+
+    private boolean accountNonExpired = true;
+
+    private boolean accountNonLocked = true;
+
+    private boolean credentialsNonExpired = true;
+
+    private boolean state = true;
+
 
     public User() {
     }
@@ -56,6 +61,23 @@ public class User implements Serializable {
         this.person = person;
     }
 
+    public User(String username,
+                String password,
+                Set<Role> roles,
+                Person person,
+                boolean accountNonExpired,
+                boolean accountNonLocked,
+                boolean credentialsNonExpired,
+                boolean state) {
+        this.username = username;
+        this.password = password;
+        this.roles = roles;
+        this.person = person;
+        this.accountNonExpired = accountNonExpired;
+        this.accountNonLocked = accountNonLocked;
+        this.credentialsNonExpired = credentialsNonExpired;
+        this.state = state;
+    }
 
     public BigInteger getId() {
         return id;
@@ -81,13 +103,13 @@ public class User implements Serializable {
         this.password = password;
     }
 
-    public Set<Role> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
-    }
+//    public Set<Role> getRoles() {
+//        return roles;
+//    }
+//
+//    public void setRoles(Set<Role> roles) {
+//        this.roles = roles;
+//    }
 
     public Person getPerson() {
         return person;
@@ -96,12 +118,43 @@ public class User implements Serializable {
     public void setPerson(Person person) {
         this.person = person;
     }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return accountNonExpired;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return accountNonLocked;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return credentialsNonExpired;
+    }
+
+    //TODO return state field
+    @Override
+    public boolean isEnabled() {
+        return state;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return roles;
+    }
+
+    public void setAuthorities(Set<Role> authorities) {
+        this.roles = authorities;
+    }
+
     //TODO equals , hashCode, toString methods
     @Override
     public String toString() {
         return "User {ID = " + getId()
                 + ", Username = " + getUsername()
-                + ", Role {" + getRoles() + "}"
+                + ", Role {" + getAuthorities() + "}"
                 + ", Person = " + getPerson()
                 + "}";
     }

@@ -1,4 +1,4 @@
-package com.springbazaar.web.view;
+package com.springbazaar.web.ui.view;
 
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
@@ -13,7 +13,7 @@ import javax.annotation.PostConstruct;
 @SpringView(name = AccessDeniedView.VIEW_NAME)
 @UIScope
 public class AccessDeniedView extends VerticalLayout implements View {
-    public static final String VIEW_NAME = "/access_denied";
+    public static final String VIEW_NAME = "/accessDenied";
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {

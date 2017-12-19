@@ -1,6 +1,7 @@
 package com.springbazaar.domain;
 
 import com.springbazaar.domain.type.RoleType;
+import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -9,7 +10,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "SB_ROLES")
-public class Role implements Serializable {
+public class Role implements Serializable, GrantedAuthority {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private BigInteger id;
@@ -71,7 +72,7 @@ public class Role implements Serializable {
     @Override
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + roleType.hashCode();
+        result = 31 * result + (roleType != null ? roleType.hashCode() : 0);
 //        result = 31 * result + (createdWhen != null ? createdWhen.hashCode() : 0);
         return result;
     }
@@ -84,4 +85,8 @@ public class Role implements Serializable {
                 '}';
     }
 
+    @Override
+    public String getAuthority() {
+        return roleType.name();
+    }
 }
