@@ -103,14 +103,6 @@ public class User implements Serializable, UserDetails {
         this.password = password;
     }
 
-//    public Set<Role> getRoles() {
-//        return roles;
-//    }
-//
-//    public void setRoles(Set<Role> roles) {
-//        this.roles = roles;
-//    }
-
     public Person getPerson() {
         return person;
     }
