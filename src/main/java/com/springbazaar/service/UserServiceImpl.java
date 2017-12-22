@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public User saveOrUpdate(User userForm, Person personForm, List<String> roleForm) {
-        LOGGER.debug("saveOrUpdate start");
+        LOGGER.debug("Save/Update User Service started");
         if (isUsernameExist(userForm.getUsername())) {
             String errorMessage = "User with username " + userForm.getUsername() + " already exist.";
             LOGGER.error(errorMessage);
@@ -58,22 +58,17 @@ public class UserServiceImpl implements UserService {
             }
             roles.add(userRole);
         }
-        FullName personFullName = new FullName(personForm.getFullName().getFirstName(),
-                personForm.getFullName().getMiddleName(),
-                personForm.getFullName().getLastName());
-        Person newPerson = new Person(personFullName);
+        userForm.setPassword(passwordEncoder.encode(userForm.getPassword()));
 
-        User newUser = new User(userForm.getUsername(), passwordEncoder.encode(userForm.getPassword()));
-
-        newPerson.setUser(newUser);
-        newPerson.setEmail(newUser.getUsername());
-        newUser.setPerson(newPerson);
-        personRepository.save(newPerson);
-        newUser.setAuthorities(roles);
+        personForm.setUser(userForm);
+        personForm.setEmail(userForm.getUsername());
+        userForm.setPerson(personForm);
+        personRepository.save(personForm);
+        userForm.setAuthorities(roles);
         roleRepository.save(roles);
-        userRepository.save(newUser);
-
-        return newUser;
+        userRepository.save(userForm);
+        LOGGER.debug(userForm.toString() + " has been registered");
+        return userForm;
     }
 
     @Override

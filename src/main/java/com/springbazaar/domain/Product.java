@@ -93,4 +93,15 @@ public class Product extends StandardEntity implements Serializable {
     }
 
     //TODO equals , hashCode, toString methods
+
+    @Override
+    public String toString() {
+        return "Product {" +
+                "ID = " + id +
+                ", caption = '" + caption + '\'' +
+                ", description = '" + description + '\'' +
+                ", price = " + price +
+                ", person ID = " + person.getId() +
+                '}';
+    }
 }

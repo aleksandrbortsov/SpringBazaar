@@ -53,6 +53,6 @@ public class FullName implements Serializable {
 
     @Override
     public String toString() {
-        return "{" + getFirstName() + " " + getMiddleName() + " " + getLastName() + "}";
+        return "{" + getFirstName() + ", " + getMiddleName() + ", " + getLastName() + "}";
     }
 }

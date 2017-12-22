@@ -126,7 +126,6 @@ public class User implements Serializable, UserDetails {
         return credentialsNonExpired;
     }
 
-    //TODO return state field
     @Override
     public boolean isEnabled() {
         return state;
@@ -144,10 +143,10 @@ public class User implements Serializable, UserDetails {
     //TODO equals , hashCode, toString methods
     @Override
     public String toString() {
-        return "User {ID = " + getId()
-                + ", Username = " + getUsername()
-                + ", Role {" + getAuthorities() + "}"
-                + ", Person = " + getPerson()
+        return "User {ID = " + id
+                + ", username = " + username
+                + ", role {" + roles + "}"
+                + ", " + person
                 + "}";
     }
 }

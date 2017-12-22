@@ -94,16 +94,16 @@ public class Person implements Serializable {
     //TODO equals , hashCode, toString methods
     @Override
     public String toString() {
-        StringBuilder stringBuilder = new StringBuilder("Person");
+        StringBuilder stringBuilder = new StringBuilder("Person ");
         stringBuilder.append("{ID = ").append(id);
-        stringBuilder.append(", Full name = ").append(fullName);
+        stringBuilder.append(", full name = ").append(fullName);
         if (StringUtils.isNotEmpty(email) && email.equals(user.getUsername())) {
-            stringBuilder.append(", Username/Email = ").append(user.getUsername());
+            stringBuilder.append(", username/email = ").append(user.getUsername());
         } else {
-            stringBuilder.append(", Username = ").append(user.getUsername());
-            stringBuilder.append(", Email = ").append(email);
+            stringBuilder.append(", username = ").append(user.getUsername());
+            stringBuilder.append(", email = ").append(email);
         }
-        stringBuilder.append(", Products = {").append(getProducts()).append("}");
+        stringBuilder.append(", products = {").append(getProducts()).append("}");
         stringBuilder.append("}");
         return String.valueOf(stringBuilder);
     }
