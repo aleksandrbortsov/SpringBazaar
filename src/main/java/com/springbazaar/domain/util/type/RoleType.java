@@ -1,4 +1,4 @@
-package com.springbazaar.domain.type;
+package com.springbazaar.domain.util.type;
 
 import com.springbazaar.domain.Role;
 

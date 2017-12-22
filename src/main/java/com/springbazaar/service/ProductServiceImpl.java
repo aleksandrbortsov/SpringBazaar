@@ -1,5 +1,6 @@
 package com.springbazaar.service;
 
+import com.springbazaar.domain.Person;
 import com.springbazaar.domain.Product;
 import com.springbazaar.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +23,13 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<Product> listAll() {
         List<Product> products = new ArrayList<>();
-        productRepository.findAll().forEach(products::add); //fun with Java 8
+        productRepository.findAll().forEach(products::add);
         return products;
+    }
+
+    @Override
+    public List<Product> listAllByPerson(Person person) {
+        return productRepository.findAllByPerson(person);
     }
 
     @Override
@@ -37,7 +43,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void delete(BigInteger id) {
-
+    public void deleteById(BigInteger id) {
+        productRepository.delete(id);
     }
 }

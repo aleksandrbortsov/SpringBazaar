@@ -11,9 +11,8 @@ import com.vaadin.ui.themes.ValoTheme;
 import javax.annotation.PostConstruct;
 
 @SpringView(name = ErrorView.VIEW_NAME)
-@UIScope
 public class ErrorView extends VerticalLayout implements View {
-    public static final String VIEW_NAME = "/error";
+    public static final String VIEW_NAME = "error";
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {

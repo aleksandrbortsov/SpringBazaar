@@ -1,13 +1,15 @@
 package com.springbazaar.service;
 
-import com.springbazaar.domain.FullName;
 import com.springbazaar.domain.Person;
 import com.springbazaar.domain.Role;
 import com.springbazaar.domain.User;
-import com.springbazaar.domain.type.RoleType;
+import com.springbazaar.domain.util.FullName;
+import com.springbazaar.domain.util.type.RoleType;
+import com.springbazaar.exception.UserAuthenticationException;
 import com.springbazaar.repository.PersonRepository;
 import com.springbazaar.repository.RoleRepository;
 import com.springbazaar.repository.UserRepository;
+import com.vaadin.ui.Notification;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,6 +44,12 @@ public class UserServiceImpl implements UserService {
 
     public User saveOrUpdate(User userForm, Person personForm, List<String> roleForm) {
         LOGGER.debug("saveOrUpdate start");
+        if (isUsernameExist(userForm.getUsername())) {
+            String errorMessage = "User with username " + userForm.getUsername() + " already exist.";
+            LOGGER.error(errorMessage);
+            Notification.show("Authentication error", errorMessage, Notification.Type.ERROR_MESSAGE);
+            throw new UserAuthenticationException(errorMessage);
+        }
         Set<Role> roles = new HashSet<>();
         for (String roleItem : roleForm) {
             Role userRole = roleRepository.findByRoleType(RoleType.findByStringType(StringUtils.upperCase(roleItem)));
@@ -64,7 +72,13 @@ public class UserServiceImpl implements UserService {
         newUser.setAuthorities(roles);
         roleRepository.save(roles);
         userRepository.save(newUser);
+
         return newUser;
+    }
+
+    @Override
+    public boolean isUsernameExist(String username) {
+        return userRepository.findByUsername(username) != null;
     }
 
     @Override
@@ -78,7 +92,7 @@ public class UserServiceImpl implements UserService {
         return userRepository.findOne(id);
     }
 
-    @Secured("ROLE_ADMIN")
+    @Secured("ADMIN")
     public void delete(User user) {
         userRepository.delete(user);
     }

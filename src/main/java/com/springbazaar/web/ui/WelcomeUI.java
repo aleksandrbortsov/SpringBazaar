@@ -1,107 +1,110 @@
 package com.springbazaar.web.ui;
 
+import com.springbazaar.domain.Person;
+import com.springbazaar.domain.Product;
 import com.springbazaar.domain.User;
-import com.springbazaar.web.ui.view.NewItemView;
+import com.springbazaar.service.PersonService;
+import com.springbazaar.service.ProductService;
+import com.springbazaar.web.ui.editor.ProductEditor;
 import com.vaadin.annotations.Theme;
-import com.vaadin.navigator.View;
-import com.vaadin.navigator.ViewDisplay;
+import com.vaadin.icons.VaadinIcons;
+import com.vaadin.server.Page;
 import com.vaadin.server.VaadinRequest;
+import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.spring.annotation.SpringUI;
-import com.vaadin.spring.annotation.SpringViewDisplay;
-import com.vaadin.spring.annotation.UIScope;
-import com.vaadin.spring.navigator.SpringNavigator;
-import com.vaadin.spring.navigator.SpringViewProvider;
 import com.vaadin.ui.*;
-import com.vaadin.ui.themes.ValoTheme;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 
-import javax.annotation.PostConstruct;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 
 @Theme("valo")
-@SpringViewDisplay
-@SpringUI(path = "/welcome")
-@UIScope
-public class WelcomeUI extends UI implements ViewDisplay {
+@SpringUI(path = WelcomeUI.NAME)
+public class WelcomeUI extends MainUI {
+    public static final String NAME = "/welcome";
+    private final ProductService productService;
+    private final PersonService personService;
+    private final Label loggedUsername = new Label("Username");
+    private final Button addProductButton = new Button("Add");
+    private final Button editProductButton = new Button("Edit");
+    private final Button deleteProductButton = new Button("Delete");
+    private final Grid<Product> grid = new Grid<>("All products");
 
-    private final CssLayout navigationBar = new CssLayout();
-    private final ApplicationContext applicationContext;
-    private final SpringViewProvider springViewProvider;
-    private final SpringNavigator springNavigator;
-    private Label loggedUsername = new Label("Username");
-    private Panel applicationViewDisplay;
+    private Product selectedProduct;
 
     @Autowired
-    public WelcomeUI(ApplicationContext applicationContext,
-                     SpringViewProvider springViewProvider,
-                     SpringNavigator springNavigator) {
-        this.applicationContext = applicationContext;
-
-        this.springViewProvider = springViewProvider;
-        this.springNavigator = springNavigator;
-    }
-
-    public static WelcomeUI getInstance() {
-        return (WelcomeUI) UI.getCurrent();
-    }
-
-    @PostConstruct
-    public void init() {
-//        springNavigator.setErrorView(ErrorView.class);
-//        springViewProvider.setAccessDeniedViewClass(AccessDeniedView.class);
-        applicationViewDisplay = new Panel();
-        applicationViewDisplay.setSizeFull();
+    public WelcomeUI(ProductService productService, PersonService personService) {
+        this.productService = productService;
+        this.personService = personService;
     }
 
     @Override
     protected void init(VaadinRequest vaadinRequest) {
-        final VerticalLayout root = new VerticalLayout();
-        root.setSizeFull();
-        setContent(root);
+        Page.getCurrent().setTitle("Spring Bazaar Application");
 
-        User currentUser = WelcomeUI.getInstance().getCurrentUser();
+        User currentUser = getCurrentUser();
         loggedUsername.setValue("Welcome, " +
                 (currentUser != null ? currentUser.getPerson().getShortName() : ""));
-        VerticalLayout navigationCaption = new VerticalLayout(loggedUsername);
 
-        HorizontalLayout navigationButtons = new HorizontalLayout(createNavigationButton("Add item",
-                NewItemView.VIEW_NAME));
+        List<Product> product = new ArrayList<>();
+//        TODO revert when security will done
+//        product.addAll(productService.listAllByPerson(currentUser.getPerson()));
+        Person person = personService.getById(new BigInteger("1"));
 
+        product.addAll(productService.listAllByPerson(person));
+        grid.setItems(product);
+        grid.getEditor().setEnabled(true);
+        grid.addColumn(Product::getCaption).setCaption("Caption")
+                .setEditorComponent(new TextField(), Product::setCaption);
+        grid.addColumn(Product::getDescription).setCaption("Description")
+                .setEditorComponent(new TextField(), Product::setDescription);
+        grid.addColumn(Product::getPrice).setCaption("Price");
+        grid.setSelectionMode(Grid.SelectionMode.SINGLE);
 
-        navigationBar.addStyleName(ValoTheme.LINK_SMALL);
-        navigationBar.addComponent(navigationCaption);
-        navigationBar.addComponent(navigationButtons);
-//        navigationBar.addComponent(createNavigationButton("Register",
-//                RegistrationView.VIEW_NAME));
-        root.addComponent(navigationBar);
+        grid.asSingleSelect().addValueChangeListener(selectionEvent -> {
+            selectedProduct = selectionEvent.getValue();
 
-        root.addComponent(applicationViewDisplay);
-        root.setExpandRatio(applicationViewDisplay, 1.0f);
-    }
+        });
+        grid.addSelectionListener(selectionEvent -> {
+            deleteProductButton.setEnabled(selectedProduct != null);
+            editProductButton.setEnabled(selectedProduct != null);
+        });
 
-    private Button createNavigationButton(String caption, final String viewName) {
-        Button button = new Button(caption);
-        button.addStyleName(ValoTheme.LINK_SMALL);
-        button.addClickListener(event -> getUI().getNavigator().navigateTo(viewName));
-        return button;
-    }
+        addProductButton.addClickListener(event -> getPage().setLocation(ProductEditor.NAME));
+        addProductButton.setIcon(VaadinIcons.PLUS);
 
-    @Override
-    public void showView(View view) {
-        applicationViewDisplay.setContent((Component) view);
-    }
+        editProductButton.setEnabled(false);
+        editProductButton.setIcon(VaadinIcons.EDIT);
+        editProductButton.addClickListener(event -> {
+            //TODO Edit current item
+            ProductEditor productEditor = new ProductEditor();
+//            ((Product) grid.getSelectedItems().iterator().next())
+            getPage().setLocation(productEditor.getPageName());
+        });
 
-    private User getCurrentUser() {
-        if (isUserAnonymous()) {
-            return null;
-        } else {
-            return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        }
-    }
+        deleteProductButton.setEnabled(false);
+        deleteProductButton.setIcon(VaadinIcons.TRASH);
+        deleteProductButton.addClickListener(event -> {
+            product.remove(selectedProduct);
+            grid.getDataProvider().refreshAll();
+            Notification.show("Product " + selectedProduct.getCaption() + " has been deleted",
+                    Notification.Type.TRAY_NOTIFICATION);
+            selectedProduct = null;
+            editProductButton.setEnabled(false);
+            deleteProductButton.setEnabled(false);
+        });
 
-    private boolean isUserAnonymous() {
-        return SecurityContextHolder.getContext().getAuthentication() instanceof AnonymousAuthenticationToken;
+        HorizontalLayout buttons = new HorizontalLayout(addProductButton, editProductButton, deleteProductButton);
+        VerticalLayout fields = new VerticalLayout(loggedUsername, grid, buttons);
+        fields.setSpacing(true);
+        fields.setMargin(new MarginInfo(true, true, true, false));
+        fields.setSizeUndefined();
+
+        VerticalLayout uiLayout = new VerticalLayout(fields);
+        uiLayout.setSizeFull();
+        uiLayout.setComponentAlignment(fields, Alignment.TOP_LEFT);
+
+        setContent(uiLayout);
     }
 }

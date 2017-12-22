@@ -1,16 +1,21 @@
-package com.springbazaar.domain;
-
-import org.hibernate.validator.constraints.NotEmpty;
+package com.springbazaar.domain.util;
 
 import javax.persistence.Embeddable;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 @Embeddable
 public class FullName implements Serializable {
-
-    @NotEmpty(message = "*Please provide your name")
+    @Size(min = 5, max = 50)
+    @NotNull
     private String firstName;
+
+    @Size(max = 50)
     private String middleName;
+
+    @Size(min = 5, max = 50)
+    @NotNull
     private String lastName;
 
     public FullName() {

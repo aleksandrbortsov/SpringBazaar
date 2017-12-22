@@ -1,5 +1,6 @@
 package com.springbazaar.domain;
 
+import com.springbazaar.domain.util.FullName;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.*;

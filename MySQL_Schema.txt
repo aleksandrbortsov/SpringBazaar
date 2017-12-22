@@ -32,16 +32,18 @@ CREATE TABLE `spring_bazaar`.`sb_users` (
   `first_name` VARCHAR(45) NULL,
   `middle_name` VARCHAR(45) NULL,
   `last_name` VARCHAR(45) NULL,
-  `product_id` INT UNSIGNED NULL,
   PRIMARY KEY (`id`));
   
   DROP TABLE IF EXISTS `spring_bazaar`.`sb_products`;
   CREATE TABLE `spring_bazaar`.`sb_products` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `description` VARCHAR(255) DEFAULT NULL,
-  `price` DECIMAL(10,2) DEFAULT NULL,
+  `caption` VARCHAR(50) NOT NULL,
+  `description` VARCHAR(500) DEFAULT NULL,
+  `price` DECIMAL(8,2) DEFAULT NULL,
   `image_url` VARCHAR(200) DEFAULT NULL,
   `person_id` INT NOT NULL,
+  `created_when` DATETIME NOT NULL,
+  `created_by` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`id`));
   
   DROP TABLE IF EXISTS `spring_bazaar`.`sb_users_roles`;

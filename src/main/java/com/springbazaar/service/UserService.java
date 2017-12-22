@@ -15,4 +15,6 @@ public interface UserService {
     User getUserById(BigInteger id);
 
     void delete(User user);
+
+    boolean isUsernameExist(String username);
 }

@@ -1,34 +1,36 @@
 package com.springbazaar.web.ui;
 
-
-import com.springbazaar.domain.FullName;
 import com.springbazaar.domain.Person;
 import com.springbazaar.domain.User;
+import com.springbazaar.domain.util.FullName;
+import com.springbazaar.domain.util.type.RoleType;
 import com.springbazaar.service.UserService;
 import com.springbazaar.service.security.SecurityService;
 import com.vaadin.annotations.Theme;
+import com.vaadin.data.BeanValidationBinder;
+import com.vaadin.data.Validator;
+import com.vaadin.data.validator.EmailValidator;
+import com.vaadin.data.validator.StringLengthValidator;
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Sizeable;
-import com.vaadin.server.UserError;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
-import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.*;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-@SpringUI(path = "/registration")
+@SpringUI(path = RegistrationUI.NAME)
 @Theme("valo")
-@UIScope
 public class RegistrationUI extends UI {
+    public static final String NAME = "/registration";
     private static final Logger LOGGER = LoggerFactory.getLogger(RegistrationUI.class);
 
     private static int tabIndex = 0;
-    private final List<TextField> mandatoryFields = new ArrayList<>();
     private final TextField userFirstName = new TextField();
     private final TextField userMiddleName = new TextField();
     private final TextField userLastName = new TextField();
@@ -37,11 +39,13 @@ public class RegistrationUI extends UI {
     private final CheckBox userRoleBuyer = new CheckBox("Buyer");
     private final TextField username = new TextField();
     private final PasswordField password = new PasswordField();
-    private final PasswordField passwordRepeat = new PasswordField();
+    private final PasswordField passwordConfirm = new PasswordField();
+    private final Label validationStatus = new Label();
+    private final Button registrationButton = new Button("CREATE AN ACCOUNT");
     private final UserService userService;
     private final SecurityService securityService;
-    private boolean needFillFlag = false;
-
+    private BeanValidationBinder<User> userBeanValidationBinder = new BeanValidationBinder<>(User.class);
+    private BeanValidationBinder<FullName> fullNameBeanValidationBinder = new BeanValidationBinder<>(FullName.class);
 
     @Autowired
     public RegistrationUI(UserService userService, SecurityService securityService) {
@@ -52,11 +56,23 @@ public class RegistrationUI extends UI {
     @Override
     protected void init(VaadinRequest request) {
         VerticalLayout leftLayout = new VerticalLayout();
+        settingAndLayoutField(leftLayout, userFirstName, "First name");
+        fullNameBeanValidationBinder.forField(userFirstName)
+                .asRequired("Please provide your name")
+                .withValidator(new StringLengthValidator("Name must be at least 5 characters long",
+                        5, null))
+                .bind(FullName::getFirstName, FullName::setFirstName);
 
-        settingAndLayoutField(leftLayout, userFirstName, "First name", true);
-        settingAndLayoutField(leftLayout, userMiddleName, "Middle name", false);
-        settingAndLayoutField(leftLayout, userLastName, "Last name", true);
+        settingAndLayoutField(leftLayout, userMiddleName, "Middle name");
+        fullNameBeanValidationBinder.forField(userMiddleName)
+                .bind(FullName::getMiddleName, FullName::setMiddleName);
 
+        settingAndLayoutField(leftLayout, userLastName, "Last name");
+        fullNameBeanValidationBinder.forField(userLastName)
+                .asRequired("Please provide your surname")
+                .bind(FullName::getLastName, FullName::setLastName);
+
+        fullNameBeanValidationBinder.setBean(new FullName());
 
         leftLayout.addComponent(userRoleLabel);
         userRoleSeller.setTabIndex(tabIndex);
@@ -66,37 +82,72 @@ public class RegistrationUI extends UI {
         leftLayout.addComponent(roleLayout);
 
         VerticalLayout rightLayout = new VerticalLayout();
-        settingAndLayoutField(rightLayout, username, "Email", true);
-        settingAndLayoutField(rightLayout, password, "Password", true);
-        settingAndLayoutField(rightLayout, passwordRepeat, "Repeat password", true);
+        settingAndLayoutField(rightLayout, username, "Email");
+        userBeanValidationBinder.forField(username)
+                .asRequired("Email may not be empty")
+                .withValidator(new EmailValidator("Not a valid email address"))
+                .bind(User::getUsername, User::setUsername);
 
-        final Button okButton = new Button("CREATE AN ACCOUNT");
-        okButton.setTabIndex(tabIndex);
-        okButton.addClickListener((Button.ClickListener) clickEvent -> {
-            needFillFlag = false;
-            checkFilledMandatoryFields();
-            checkSelectedRoles(userRoleLabel, userRoleSeller, userRoleBuyer);
-            List<String> roles = addRoleFromForm(userRoleSeller, userRoleBuyer);
-            checkParity(password, passwordRepeat);
-            if (!needFillFlag) {
-                User user = new User(username.getValue(), password.getValue());
-                Person person = new Person(new FullName(userFirstName.getValue(),
-                        userMiddleName.getValue(),
-                        userLastName.getValue()));
-                userService.saveOrUpdate(user, person, roles);
-                securityService.login(username.getValue(), password.getValue());
-                LOGGER.debug("New User " + user + " has been registered");
-                Notification.show("New User has been registered", Notification.Type.TRAY_NOTIFICATION);
+        settingAndLayoutField(rightLayout, password, "Password");
+        userBeanValidationBinder.forField(password)
+                .asRequired("Password may not be empty")
+                .withValidator(new StringLengthValidator("Password must be at least 7 characters long",
+                        7, null))
+                .bind(User::getPassword, User::setPassword);
 
-                getPage().setLocation("/welcome");
+        settingAndLayoutField(rightLayout, passwordConfirm, "Confirm your password");
+        userBeanValidationBinder.forField(passwordConfirm)
+                .asRequired("Please confirm your password")
+                .bind(User::getPassword, (user, password) -> {
+                });
+
+        userBeanValidationBinder.withValidator(Validator.from(user -> {
+            if (password.isEmpty() || passwordConfirm.isEmpty()) {
+                return true;
+            } else {
+                return Objects.equals(password.getValue(),
+                        passwordConfirm.getValue());
             }
+        }, "Entered password and confirmation password must match"));
+
+
+        userBeanValidationBinder.setStatusLabel(validationStatus);
+
+        userBeanValidationBinder.setBean(new User());
+
+
+        registrationButton.setEnabled(false);
+        userBeanValidationBinder.addStatusChangeListener(
+                event -> registrationButton.setEnabled(userBeanValidationBinder.isValid()));
+//        fullNameBeanValidationBinder.addStatusChangeListener(
+//                event -> registrationButton.setEnabled(fullNameBeanValidationBinder.isValid()));
+
+        registrationButton.setTabIndex(tabIndex);
+        registrationButton.setIcon(VaadinIcons.USER_CHECK);
+        registrationButton.addClickListener((Button.ClickListener) clickEvent -> {
+            List<String> roles = addRoleFromForm(userRoleSeller, userRoleBuyer);
+            User user = userBeanValidationBinder.getBean();
+            Person person = new Person(fullNameBeanValidationBinder.getBean());
+            userService.saveOrUpdate(user, person, roles);
+            securityService.login(username.getValue(), password.getValue());
+            LOGGER.debug("New User " + user + " has been registered");
+            Notification.show("User " + user.getUsername() + " has been registered",
+                    Notification.Type.TRAY_NOTIFICATION);
+            getPage().setLocation("/welcome");
+
         });
-        rightLayout.addComponent(okButton);
+        rightLayout.addComponent(validationStatus);
+        rightLayout.addComponent(registrationButton);
 
         HorizontalLayout registrationForm = new HorizontalLayout(leftLayout, rightLayout);
+        registrationForm.setMargin(true);
+        registrationForm.addStyleName("outlined");
+        registrationForm.setSizeUndefined();
 
-        VerticalLayout root = new VerticalLayout(registrationForm);
-        setContent(root);
+        VerticalLayout rootUi = new VerticalLayout(registrationForm);
+        rootUi.setSizeFull();
+        rootUi.setComponentAlignment(registrationForm, Alignment.MIDDLE_CENTER);
+        setContent(rootUi);
     }
 
     private List<String> addRoleFromForm(CheckBox userRoleSeller, CheckBox userRoleBuyer) {
@@ -107,49 +158,16 @@ public class RegistrationUI extends UI {
         if (userRoleBuyer.getValue()) {
             roles.add(userRoleBuyer.getCaption());
         }
+        roles.add(RoleType.USER.toString());
         return roles;
     }
 
-    private void settingAndLayoutField(VerticalLayout layout, TextField field, String caption, boolean isRequired) {
+    private void settingAndLayoutField(VerticalLayout layout, TextField field, String caption) {
         field.setWidth(25.0f, Sizeable.Unit.PERCENTAGE);
         field.setTabIndex(tabIndex);
         tabIndex++;
         field.setCaption(caption);
         field.setMaxLength(25);
-        field.setRequiredIndicatorVisible(isRequired);
-        if (isRequired) {
-            mandatoryFields.add(field);
-        }
         layout.addComponent(field);
-    }
-
-    private void checkParity(PasswordField userPassword, PasswordField userPasswordRepeat) {
-        if (!userPassword.getValue().equals(userPasswordRepeat.getValue())) {
-            needFillFlag = true;
-            userPasswordRepeat.setComponentError(new UserError("Please check that the password is repeated correctly."));
-        }
-    }
-
-    private void checkFilledMandatoryFields() {
-        for (TextField field : mandatoryFields) {
-            if (StringUtils.isEmpty(field.getValue())) {
-                updateCaption(field);
-                needFillFlag = true;
-            }
-        }
-    }
-
-    private void checkSelectedRoles(Label userRoleLabel, CheckBox userRoleSeller, CheckBox userRoleBuyer) {
-        if (!userRoleSeller.getValue()
-                && !userRoleBuyer.getValue()) {
-            needFillFlag = true;
-            userRoleLabel.setComponentError(new UserError("Please select role(s)"));
-        }
-    }
-
-    private void updateCaption(TextField textField) {
-        textField.setPlaceholder("This mandatory field");
-        textField.setComponentError(new UserError("Please fill this field"));
-        Notification.show("Please fill mandatory fields with *", Notification.Type.TRAY_NOTIFICATION);
     }
 }

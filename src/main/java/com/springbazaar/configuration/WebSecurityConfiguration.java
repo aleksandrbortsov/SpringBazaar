@@ -1,5 +1,8 @@
 package com.springbazaar.configuration;
 
+import com.springbazaar.web.ui.editor.ProductEditor;
+import com.springbazaar.web.ui.RegistrationUI;
+import com.springbazaar.web.ui.WelcomeUI;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -49,6 +52,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 // let Vaadin be responsible for creating and managing its own sessions
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER)
                 .and()
+
                 .exceptionHandling().accessDeniedPage("/accessDenied")
                 .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login"))
                 .and()
@@ -64,8 +68,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                         "/error/**",
                         "/accessDenied/**",
                         "/vaadinServlet/**").permitAll()
-//                TODO after setup login delete /welcome view
-                .antMatchers("/welcome", "/registration").permitAll()
+//                TODO after setup login delete /welcome etc views
+                .antMatchers(WelcomeUI.NAME, ProductEditor.NAME, RegistrationUI.NAME).permitAll()
                 .anyRequest().authenticated();
 //                .antMatchers("/authorized", "/**").fullyAuthenticated();
     }

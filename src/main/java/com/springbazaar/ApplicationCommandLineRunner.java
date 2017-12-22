@@ -1,9 +1,5 @@
 package com.springbazaar;
 
-import com.springbazaar.domain.FullName;
-import com.springbazaar.domain.Person;
-import com.springbazaar.domain.Role;
-import com.springbazaar.domain.User;
 import com.springbazaar.repository.PersonRepository;
 import com.springbazaar.repository.RoleRepository;
 import com.springbazaar.repository.UserRepository;

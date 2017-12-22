@@ -1,6 +1,6 @@
 package com.springbazaar.domain;
 
-import com.springbazaar.domain.type.RoleType;
+import com.springbazaar.domain.util.type.RoleType;
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
@@ -19,7 +19,7 @@ public class Role implements Serializable, GrantedAuthority {
     @Column(name = "NAME", unique = true, nullable = false)
     private RoleType roleType;
 
-    @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "roles", fetch = FetchType.EAGER)
     private Set<User> user;
 
 //TODO add table and entity (example https://github.com/cuba-platform/cuba/blob/00ceaf9a022f4f997f29c4a2951c0ca9f7900fc0/modules/global/src/com/haulmont/cuba/security/entity/Permission.java)
