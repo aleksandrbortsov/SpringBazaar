@@ -3,10 +3,10 @@ package com.springbazaar.domain.util.type;
 import com.springbazaar.domain.Role;
 
 public enum RoleType {
-    ADMIN,
-    USER,
-    SELLER,
-    BUYER;
+    ROLE_ADMIN,
+    ROLE_USER,
+    ROLE_SELLER,
+    ROLE_BUYER;
 
     public static RoleType findByStringType(String roleType) {
         for (RoleType roleItem : values()) {

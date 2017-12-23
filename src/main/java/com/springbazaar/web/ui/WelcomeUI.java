@@ -45,14 +45,12 @@ public class WelcomeUI extends MainUI {
 
         User currentUser = getCurrentUser();
         loggedUsername.setValue("Welcome, " +
-                (currentUser != null ? currentUser.getPerson().getShortName() : ""));
+                (currentUser != null ? currentUser.getPerson().getShortName() : "") + "!");
 
         List<Product> product = new ArrayList<>();
-//        TODO revert when security will done
-//        product.addAll(productService.listAllByPerson(currentUser.getPerson()));
-        Person person = personService.getById(new BigInteger("1"));
-
-        product.addAll(productService.listAllByPerson(person));
+        if (currentUser != null) {
+            product.addAll(productService.listAllByPerson(currentUser.getPerson()));
+        }
         grid.setItems(product);
         grid.getEditor().setEnabled(true);
         grid.addColumn(Product::getCaption).setCaption("Caption")
@@ -87,6 +85,7 @@ public class WelcomeUI extends MainUI {
         deleteProductButton.setIcon(VaadinIcons.TRASH);
         deleteProductButton.addClickListener(event -> {
             product.remove(selectedProduct);
+            productService.delete(selectedProduct);
             grid.getDataProvider().refreshAll();
             Notification.show("Product " + selectedProduct.getCaption() + " has been deleted",
                     Notification.Type.TRAY_NOTIFICATION);

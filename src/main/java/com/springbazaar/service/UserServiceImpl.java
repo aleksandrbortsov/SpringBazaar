@@ -3,7 +3,6 @@ package com.springbazaar.service;
 import com.springbazaar.domain.Person;
 import com.springbazaar.domain.Role;
 import com.springbazaar.domain.User;
-import com.springbazaar.domain.util.FullName;
 import com.springbazaar.domain.util.type.RoleType;
 import com.springbazaar.exception.UserAuthenticationException;
 import com.springbazaar.repository.PersonRepository;
@@ -30,16 +29,19 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PersonRepository personRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository,
                            RoleRepository roleRepository,
-                           PersonRepository personRepository, BCryptPasswordEncoder passwordEncoder) {
+                           PersonRepository personRepository,
+                           BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.personRepository = personRepository;
-        this.passwordEncoder = passwordEncoder;
+
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     public User saveOrUpdate(User userForm, Person personForm, List<String> roleForm) {
@@ -58,7 +60,8 @@ public class UserServiceImpl implements UserService {
             }
             roles.add(userRole);
         }
-        userForm.setPassword(passwordEncoder.encode(userForm.getPassword()));
+        //TODO encode pass
+//        userForm.setPassword(bCryptPasswordEncoder.encode(userForm.getPassword()));
 
         personForm.setUser(userForm);
         personForm.setEmail(userForm.getUsername());
@@ -87,7 +90,9 @@ public class UserServiceImpl implements UserService {
         return userRepository.findOne(id);
     }
 
-    @Secured("ADMIN")
+    @Override
+    //TODO sort out
+    @Secured("ROLE_ADMIN")
     public void delete(User user) {
         userRepository.delete(user);
     }

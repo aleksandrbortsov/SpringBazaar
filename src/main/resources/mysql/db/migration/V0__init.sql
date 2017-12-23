@@ -1,7 +1,7 @@
 CREATE TABLE `spring_bazaar`.`sb_users` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `username` VARCHAR(45) NOT NULL,
-  `password` VARCHAR(255) NULL,
+  `password` VARCHAR(255) NOT NULL,
   `state` TINYINT(1) UNSIGNED NULL,
   `group_id` INT(1) UNSIGNED NULL,
   `person_id` INT UNSIGNED NULL,

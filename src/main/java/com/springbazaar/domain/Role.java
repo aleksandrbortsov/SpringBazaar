@@ -12,7 +12,7 @@ import java.util.Set;
 @Table(name = "SB_ROLES")
 public class Role implements Serializable, GrantedAuthority {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private BigInteger id;
 
     @Enumerated(value = EnumType.STRING)

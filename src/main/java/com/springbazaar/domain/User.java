@@ -13,18 +13,13 @@ import java.util.Set;
 @Table(name = "SB_USERS")
 public class User implements Serializable, UserDetails {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private BigInteger id;
 
     @Column(unique = true, nullable = false)
-    //TODO see into @Email/@NotEmpty
-//    @Email(message = "*Please provide a valid email")
-//    @NotEmpty(message = "*Please provide an email")
     private String username;
 
     @Column(nullable = false)
-//    @Length(min = 5, message = "*Your password must have at least 5 characters")
-//    @NotEmpty(message = "*Please provide your password")
     private String password;
 
     @ManyToMany(fetch = FetchType.EAGER)

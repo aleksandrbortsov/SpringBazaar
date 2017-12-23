@@ -67,7 +67,7 @@ public class ApplicationCommandLineRunner implements CommandLineRunner {
                     "Last Admin Name");
             Person adminPerson = new Person(personFullName);
             User adminUser = new User("admin@email.com", passwordEncoder.encode("admin@email.com"));
-            userService.saveOrUpdate(adminUser, adminPerson, Collections.singletonList(RoleType.ADMIN.toString()));
+            userService.saveOrUpdate(adminUser, adminPerson, Collections.singletonList(RoleType.ROLE_ADMIN.toString()));
 
 
             personFullName = new FullName("First Seller Name",
@@ -75,7 +75,7 @@ public class ApplicationCommandLineRunner implements CommandLineRunner {
                     "Last Seller Name");
             Person sellerPerson = new Person(personFullName);
             User sellerUser = new User("seller@email.com", passwordEncoder.encode("seller@email.com"));
-            userService.saveOrUpdate(sellerUser, sellerPerson, Collections.singletonList(RoleType.SELLER.toString()));
+            userService.saveOrUpdate(sellerUser, sellerPerson, Collections.singletonList(RoleType.ROLE_SELLER.toString()));
 
             for (int i = 0; i < 5; i++) {
                 Random obj = new Random(i);
@@ -96,7 +96,7 @@ public class ApplicationCommandLineRunner implements CommandLineRunner {
                     "Last Buyer Name");
             Person buyerPerson = new Person(personFullName);
             User buyerUser = new User("buyer@email.com", passwordEncoder.encode("buyer@email.com"));
-            userService.saveOrUpdate(buyerUser, buyerPerson, Collections.singletonList(RoleType.BUYER.toString()));
+            userService.saveOrUpdate(buyerUser, buyerPerson, Collections.singletonList(RoleType.ROLE_BUYER.toString()));
 
             List<Product> products = productService.listAll();
 

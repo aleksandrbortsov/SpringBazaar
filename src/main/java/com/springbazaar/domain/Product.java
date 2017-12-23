@@ -13,9 +13,9 @@ import java.util.Date;
 
 @Entity
 @Table(name = "SB_PRODUCTS")
-public class Product extends StandardEntity implements Serializable {
+public class Product extends StandardEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private BigInteger id;
 
     @Size(min = 5, max = 50)

@@ -8,6 +8,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -20,8 +21,10 @@ public class SecurityServiceImpl implements SecurityService {
     private static final Logger LOGGER = LoggerFactory.getLogger(RegistrationUI.class);
     @Autowired
     private AuthenticationManager authenticationManager;
-    @Resource(name = "UserDetailsServiceImpl")
+    @Autowired
     private UserDetailsService userDetailsService;
+//    @Autowired
+//    BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Override
     public String findLoggedInUsername() {
@@ -35,17 +38,13 @@ public class SecurityServiceImpl implements SecurityService {
     @Override
     public boolean login(String username, String password) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-                new UsernamePasswordAuthenticationToken(userDetails, password);
+        UsernamePasswordAuthenticationToken token =
+                new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
 
-//        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-//        Authentication authenticated = provider.authenticate(usernamePasswordAuthenticationToken);
-//        SecurityContextHolder.getContext().setAuthentication(authenticated);
+        authenticationManager.authenticate(token);
 
-        authenticationManager.authenticate(usernamePasswordAuthenticationToken);
-
-        if (usernamePasswordAuthenticationToken.isAuthenticated()) {
-            SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+        if (token.isAuthenticated()) {
+            SecurityContextHolder.getContext().setAuthentication(token);
             LOGGER.debug("Auto login {} successfully!", username);
             return true;
         } else {

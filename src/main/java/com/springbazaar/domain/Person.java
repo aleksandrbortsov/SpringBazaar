@@ -12,7 +12,7 @@ import java.util.List;
 @Table(name = "sb_persons")
 public class Person implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private BigInteger id;
 
     @OneToOne(cascade = CascadeType.ALL)
@@ -26,9 +26,6 @@ public class Person implements Serializable {
     })
     private FullName fullName;
 
-    //TODO see into @Email/@NotEmpty
-//    @Email(message = "*Please provide a valid email")
-//    @NotEmpty(message = "*Please provide an email")
     private String email;
 
     @OneToMany(mappedBy = "id", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -72,7 +69,8 @@ public class Person implements Serializable {
     }
 
     public String getShortName() {
-        return getFullName().getFirstName() + " " + getFullName().getMiddleName();
+        return getFullName().getFirstName() + " "
+                + (StringUtils.isNotEmpty(getFullName().getMiddleName()) ? getFullName().getMiddleName() : "");
     }
 
     public List<Product> getProducts() {

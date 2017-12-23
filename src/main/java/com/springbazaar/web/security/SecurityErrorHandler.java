@@ -15,7 +15,7 @@ public class SecurityErrorHandler implements ErrorHandler {
 
         if (errorEvent.getThrowable() instanceof AccessDeniedException
                 || errorEvent.getThrowable().getCause() instanceof AccessDeniedException) {
-            //TODO
+            //TODO SecurityErrorHandler
         } else {
             // TODO handle other exceptions a bit more graciously than this
             errorEvent.getThrowable().printStackTrace();

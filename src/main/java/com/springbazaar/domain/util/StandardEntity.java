@@ -7,7 +7,7 @@ import java.util.Date;
 
 @MappedSuperclass
 public class StandardEntity implements Serializable, Creatable {
-    //    @Temporal(TemporalType.TIMESTAMP)
+
     protected Date createdWhen;
 
     protected BigInteger createdBy;
@@ -19,7 +19,7 @@ public class StandardEntity implements Serializable, Creatable {
         this.createdWhen = createdWhen;
         this.createdBy = createdBy;
     }
-
+//TODO add update & delete actions
 //    protected Date updateWhen;
 //
 //    protected User updatedBy;

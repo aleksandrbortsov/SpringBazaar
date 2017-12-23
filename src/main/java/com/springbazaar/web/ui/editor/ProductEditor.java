@@ -63,9 +63,8 @@ public class ProductEditor extends MainUI {
                 addProductButton.setEnabled(productBeanValidationBinder.isValid()));
         addProductButton.setIcon(VaadinIcons.FILE_ADD);
         addProductButton.addClickListener((Button.ClickListener) clickEvent -> {
-            //TODO revert when security will done
-//            User user = getCurrentUser();
-//            if (user == null) return;
+            User user = getCurrentUser();
+            if (user == null) return;
 
             Calendar instance = Calendar.getInstance();
             instance.getTime();
@@ -77,9 +76,7 @@ public class ProductEditor extends MainUI {
                     instance.getTime(),
                     userById.getId());
 
-            //TODO revert when security will done
-//            Person person = personService.getById(user.getPerson().getId());
-            Person person = personService.getById(new BigInteger("1"));
+            Person person = personService.getById(user.getPerson().getId());
 
             newProduct.setPerson(person);
             productService.saveOrUpdate(newProduct);

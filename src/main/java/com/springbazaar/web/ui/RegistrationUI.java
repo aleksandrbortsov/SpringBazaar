@@ -29,6 +29,7 @@ import java.util.Objects;
 public class RegistrationUI extends UI {
     public static final String NAME = "/registration";
     private static final Logger LOGGER = LoggerFactory.getLogger(RegistrationUI.class);
+    public static final String PREFIX_ROLE = "ROLE_";
 
     private static int tabIndex = 0;
     private final TextField userFirstName = new TextField();
@@ -59,8 +60,8 @@ public class RegistrationUI extends UI {
         settingAndLayoutField(leftLayout, userFirstName, "First name");
         fullNameBeanValidationBinder.forField(userFirstName)
                 .asRequired("Please provide your name")
-                .withValidator(new StringLengthValidator("Name must be at least 5 characters long",
-                        5, null))
+                .withValidator(new StringLengthValidator("Name must be at least 2 characters long",
+                        2, null))
                 .bind(FullName::getFirstName, FullName::setFirstName);
 
         settingAndLayoutField(leftLayout, userMiddleName, "Middle name");
@@ -70,6 +71,8 @@ public class RegistrationUI extends UI {
         settingAndLayoutField(leftLayout, userLastName, "Last name");
         fullNameBeanValidationBinder.forField(userLastName)
                 .asRequired("Please provide your surname")
+                .withValidator(new StringLengthValidator("Surname must be at least 2 characters long",
+                        2, null))
                 .bind(FullName::getLastName, FullName::setLastName);
 
         fullNameBeanValidationBinder.setBean(new FullName());
@@ -118,9 +121,11 @@ public class RegistrationUI extends UI {
 
         registrationButton.setEnabled(false);
         userBeanValidationBinder.addStatusChangeListener(
-                event -> registrationButton.setEnabled(userBeanValidationBinder.isValid()));
-//        fullNameBeanValidationBinder.addStatusChangeListener(
-//                event -> registrationButton.setEnabled(fullNameBeanValidationBinder.isValid()));
+                event -> registrationButton.setEnabled( (userBeanValidationBinder.isValid()&fullNameBeanValidationBinder.isValid())));
+        fullNameBeanValidationBinder.addStatusChangeListener(
+                event -> registrationButton.setEnabled(
+                        (userBeanValidationBinder.isValid()&fullNameBeanValidationBinder.isValid()))
+        );
 
         registrationButton.setTabIndex(tabIndex);
         registrationButton.setIcon(VaadinIcons.USER_CHECK);
@@ -153,12 +158,12 @@ public class RegistrationUI extends UI {
     private List<String> addRoleFromForm(CheckBox userRoleSeller, CheckBox userRoleBuyer) {
         List<String> roles = new ArrayList<>();
         if (userRoleSeller.getValue()) {
-            roles.add(userRoleSeller.getCaption());
+            roles.add(PREFIX_ROLE + userRoleSeller.getCaption());
         }
         if (userRoleBuyer.getValue()) {
-            roles.add(userRoleBuyer.getCaption());
+            roles.add(PREFIX_ROLE + userRoleBuyer.getCaption());
         }
-        roles.add(RoleType.USER.toString());
+        roles.add(RoleType.ROLE_USER.toString());
         return roles;
     }
 

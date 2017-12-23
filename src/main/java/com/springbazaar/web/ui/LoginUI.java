@@ -8,9 +8,10 @@ import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@SpringUI(path = "/login")
+@SpringUI(path = LoginUI.NAME)
 @Theme("valo")
 public class LoginUI extends UI {
+    public static final String NAME="/login";
 
     private final SecurityService securityService;
 
