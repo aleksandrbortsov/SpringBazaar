@@ -23,7 +23,7 @@ import java.util.*;
 
 import static java.lang.System.exit;
 
-@Component
+//@Component
 public class ApplicationCommandLineRunner implements CommandLineRunner {
     public static final Logger LOGGER = LoggerFactory.getLogger(ApplicationCommandLineRunner.class);
     private static final String DELIMITER = "------------------------------------>";
@@ -32,14 +32,14 @@ public class ApplicationCommandLineRunner implements CommandLineRunner {
     private final PersonService personService;
     private final ProductService productService;
     private final ApplicationContext applicationContext;
-    private final BCryptPasswordEncoder passwordEncoder;
+//    private final BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
     public ApplicationCommandLineRunner(BCryptPasswordEncoder passwordEncoder,
                                         ApplicationContext applicationContext,
                                         UserService userService,
                                         DataSource dataSource, PersonService personService, ProductService productService) {
-        this.passwordEncoder = passwordEncoder;
+//        this.passwordEncoder = passwordEncoder;
         this.applicationContext = applicationContext;
         this.personService = personService;
         this.userService = userService;
@@ -66,7 +66,7 @@ public class ApplicationCommandLineRunner implements CommandLineRunner {
                     "Middle Admin Name",
                     "Last Admin Name");
             Person adminPerson = new Person(personFullName);
-            User adminUser = new User("admin@email.com", passwordEncoder.encode("admin@email.com"));
+            User adminUser = new User("admin@email.com", "admin@email.com");
             userService.saveOrUpdate(adminUser, adminPerson, Collections.singletonList(RoleType.ROLE_ADMIN.toString()));
 
 
@@ -74,7 +74,7 @@ public class ApplicationCommandLineRunner implements CommandLineRunner {
                     "Middle Seller Name",
                     "Last Seller Name");
             Person sellerPerson = new Person(personFullName);
-            User sellerUser = new User("seller@email.com", passwordEncoder.encode("seller@email.com"));
+            User sellerUser = new User("seller@email.com", "seller@email.com");
             userService.saveOrUpdate(sellerUser, sellerPerson, Collections.singletonList(RoleType.ROLE_SELLER.toString()));
 
             for (int i = 0; i < 5; i++) {
@@ -95,7 +95,7 @@ public class ApplicationCommandLineRunner implements CommandLineRunner {
                     "Middle Buyer Name",
                     "Last Buyer Name");
             Person buyerPerson = new Person(personFullName);
-            User buyerUser = new User("buyer@email.com", passwordEncoder.encode("buyer@email.com"));
+            User buyerUser = new User("buyer@email.com", "buyer@email.com");
             userService.saveOrUpdate(buyerUser, buyerPerson, Collections.singletonList(RoleType.ROLE_BUYER.toString()));
 
             List<Product> products = productService.listAll();

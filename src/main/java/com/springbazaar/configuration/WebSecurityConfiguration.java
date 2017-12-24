@@ -2,29 +2,31 @@ package com.springbazaar.configuration;
 
 import com.springbazaar.web.ui.LoginUI;
 import com.springbazaar.web.ui.RegistrationUI;
-import com.springbazaar.web.ui.WelcomeUI;
-import com.springbazaar.web.ui.editor.ProductEditor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
+import org.springframework.security.web.authentication.RememberMeServices;
+import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
 
 
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-//    @Autowired
-//    private UserDetailsService userDetailsService;
+    @Autowired
+    private UserDetailsService userDetailsService;
 //
-    @Bean
-    public BCryptPasswordEncoder getPasswordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+//    @Bean
+//    public BCryptPasswordEncoder getPasswordEncoder() {
+//        return new BCryptPasswordEncoder();
+//    }
 //
 //    @Autowired
 //    public DaoAuthenticationProvider createDaoAuthenticationProvider() {
@@ -51,6 +53,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().accessDeniedPage("/accessDenied")
                 .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint(LoginUI.NAME))
                 .and()
+                .rememberMe().rememberMeServices(rememberMeServices()).key("myAppKey")
+                .and()
                 .logout()
                 .logoutUrl("/logout")
                 .logoutSuccessUrl(LoginUI.NAME)
@@ -65,8 +69,11 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                         "/error/**",
                         "/accessDenied/**",
                         "/vaadinServlet/**").permitAll()
-//                TODO after setup login delete /welcome etc views
                 .antMatchers(RegistrationUI.NAME).permitAll()
                 .anyRequest().authenticated();
+    }
+    @Bean
+    public RememberMeServices rememberMeServices() {
+        return new TokenBasedRememberMeServices("myAppKey", userDetailsService);
     }
 }
