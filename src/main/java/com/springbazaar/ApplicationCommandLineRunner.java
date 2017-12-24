@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.ApplicationContext;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
@@ -23,7 +23,7 @@ import java.util.*;
 
 import static java.lang.System.exit;
 
-//@Component
+@Component
 public class ApplicationCommandLineRunner implements CommandLineRunner {
     public static final Logger LOGGER = LoggerFactory.getLogger(ApplicationCommandLineRunner.class);
     private static final String DELIMITER = "------------------------------------>";
@@ -35,7 +35,7 @@ public class ApplicationCommandLineRunner implements CommandLineRunner {
 //    private final BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
-    public ApplicationCommandLineRunner(BCryptPasswordEncoder passwordEncoder,
+    public ApplicationCommandLineRunner(//BCryptPasswordEncoder passwordEncoder,
                                         ApplicationContext applicationContext,
                                         UserService userService,
                                         DataSource dataSource, PersonService personService, ProductService productService) {
