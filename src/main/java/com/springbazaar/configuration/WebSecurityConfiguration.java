@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.authentication.RememberMeServices;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices;
 import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
 
 
@@ -53,7 +54,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().accessDeniedPage("/accessDenied")
                 .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint(LoginUI.NAME))
                 .and()
-                .rememberMe().rememberMeServices(rememberMeServices()).key("myAppKey")
+                .rememberMe()//.rememberMeServices().tokenRepository().key("myAppKey")
                 .and()
                 .logout()
                 .logoutUrl("/logout")
@@ -72,8 +73,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(RegistrationUI.NAME).permitAll()
                 .anyRequest().authenticated();
     }
-    @Bean
-    public RememberMeServices rememberMeServices() {
-        return new TokenBasedRememberMeServices("myAppKey", userDetailsService);
-    }
+//    @Bean
+//    public RememberMeServices rememberMeServices() {
+//        return new PersistentTokenBasedRememberMeServices("myAppKey", userDetailsService);
+//    }
 }

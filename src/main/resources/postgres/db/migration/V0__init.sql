@@ -93,3 +93,13 @@ WITH (
 );
 ALTER TABLE public.sb_users_roles
     OWNER to postgres;
+
+create table public.persistent_logins (
+  username varchar(64) not null,
+  series varchar(64) not null,
+  token varchar(64) not null,
+  last_used timestamp not null,
+  primary key(series)
+);
+ALTER TABLE public.persistent_logins
+    OWNER to postgres;
