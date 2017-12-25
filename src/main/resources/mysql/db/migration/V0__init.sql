@@ -52,3 +52,10 @@ CREATE TABLE `spring_bazaar`.`sb_users` (
   KEY `fk_usersroles_role_idx` (`role_id`),
   CONSTRAINT `fk_usersroles_user` FOREIGN KEY (`user_id`) REFERENCES `sb_users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_usersroles_role` FOREIGN KEY (`role_id`) REFERENCES `sb_roles` (`id`) ON DELETE CASCADE ON UPDATE CASCADE);
+
+  create table spring_bazaar.persistent_logins (
+    username varchar(64) not null,
+    series varchar(64) not null,
+    token varchar(64) not null,
+    last_used timestamp not null,
+    primary key(series));

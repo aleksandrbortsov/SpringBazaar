@@ -23,7 +23,7 @@ import java.util.*;
 
 import static java.lang.System.exit;
 
-@Component
+//@Component
 public class ApplicationCommandLineRunner implements CommandLineRunner {
     public static final Logger LOGGER = LoggerFactory.getLogger(ApplicationCommandLineRunner.class);
     private static final String DELIMITER = "------------------------------------>";
