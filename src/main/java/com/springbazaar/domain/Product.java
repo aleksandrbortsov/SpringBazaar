@@ -5,10 +5,8 @@ import com.springbazaar.domain.util.StandardEntity;
 import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Size;
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Calendar;
 import java.util.Date;
 
 @Entity
@@ -34,6 +32,12 @@ public class Product extends StandardEntity {
     private Person person;
 
     public Product() {
+    }
+
+    public Product(String caption, String description, BigDecimal price) {
+        this.caption = caption;
+        this.description = description;
+        this.price = price;
     }
 
     public Product(String caption, String description, BigDecimal price, String imageUrl, Date createdWhen, BigInteger createdBy) {

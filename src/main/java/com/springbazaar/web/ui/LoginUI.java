@@ -2,6 +2,7 @@ package com.springbazaar.web.ui;
 
 import com.springbazaar.service.security.SecurityService;
 import com.vaadin.annotations.Theme;
+import com.vaadin.event.ShortcutAction;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
@@ -42,10 +43,11 @@ public class LoginUI extends UI {
 
         loginForm.addComponent(rememberMe);
         loginButton.setIcon(VaadinIcons.KEY);
+        loginButton.setDisableOnClick(true);
+        loginButton.setClickShortcut(ShortcutAction.KeyCode.ENTER);
         loginForm.addComponent(loginButton);
 
         setFocusedComponent(username);
-
         VerticalLayout rootUi = new VerticalLayout(loginForm);
         rootUi.setSizeFull();
         rootUi.setComponentAlignment(loginForm, Alignment.MIDDLE_CENTER);

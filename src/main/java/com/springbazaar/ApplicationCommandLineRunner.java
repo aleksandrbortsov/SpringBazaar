@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.ApplicationContext;
-//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
@@ -23,9 +22,10 @@ import java.util.*;
 
 import static java.lang.System.exit;
 
+//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 //@Component
 public class ApplicationCommandLineRunner implements CommandLineRunner {
-    public static final Logger LOGGER = LoggerFactory.getLogger(ApplicationCommandLineRunner.class);
     private static final String DELIMITER = "------------------------------------>";
     private final DataSource dataSource;
     private final UserService userService;
@@ -49,7 +49,7 @@ public class ApplicationCommandLineRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-//        inspectLoadedBeans();
+        inspectLoadedBeans();
         System.out.println(String.format("%1$tF %1$tT %2$-4s DataSource = " + dataSource,
                 Calendar.getInstance().getTime(), DELIMITER));
 
@@ -113,21 +113,20 @@ public class ApplicationCommandLineRunner implements CommandLineRunner {
         System.out.println("Admin user created: " + adminUser.toString());
         System.out.println("Seller user created: " + sellerUser.toString());
         System.out.println("Product list:");
-        for (Product product: products) {
+        for (Product product : products) {
             System.out.println(product.toString());
         }
         System.out.println("Buyer user created: " + buyerUser.toString());
     }
 
     private void inspectLoadedBeans() {
-        LOGGER.debug("Let's inspect the beans provided by Spring Boot:");
         System.out.println("Let's inspect the beans provided by Spring Boot:");
 
         String[] beanNames = applicationContext.getBeanDefinitionNames();
         Arrays.sort(beanNames);
         for (String beanName : beanNames) {
-            LOGGER.debug(beanName);
-            System.out.println("Bean FullName = " + beanName);
+            System.out.println(String.format("%1$tF %1$tT %2$-4s Bean FullName = " + beanName,
+                    Calendar.getInstance().getTime(), DELIMITER));
         }
     }
 }

@@ -1,21 +1,19 @@
 package com.springbazaar.web.ui;
 
-import com.springbazaar.domain.Person;
 import com.springbazaar.domain.Product;
 import com.springbazaar.domain.User;
-import com.springbazaar.service.PersonService;
 import com.springbazaar.service.ProductService;
 import com.springbazaar.web.ui.editor.ProductEditor;
 import com.vaadin.annotations.Theme;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinRequest;
+import com.vaadin.server.VaadinSession;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,19 +22,16 @@ import java.util.List;
 public class WelcomeUI extends MainUI {
     public static final String NAME = "/welcome";
     private final ProductService productService;
-    private final PersonService personService;
     private final Label loggedUsername = new Label("Username");
     private final Button addProductButton = new Button("Add");
     private final Button editProductButton = new Button("Edit");
     private final Button deleteProductButton = new Button("Delete");
     private final Grid<Product> grid = new Grid<>("All products");
-
     private Product selectedProduct;
 
     @Autowired
-    public WelcomeUI(ProductService productService, PersonService personService) {
+    public WelcomeUI(ProductService productService) {
         this.productService = productService;
-        this.personService = personService;
     }
 
     @Override
@@ -52,12 +47,12 @@ public class WelcomeUI extends MainUI {
             product.addAll(productService.listAllByPerson(currentUser.getPerson()));
         }
         grid.setItems(product);
-        grid.getEditor().setEnabled(true);
-        grid.addColumn(Product::getCaption).setCaption("Caption")
-                .setEditorComponent(new TextField(), Product::setCaption);
-        grid.addColumn(Product::getDescription).setCaption("Description")
-                .setEditorComponent(new TextField(), Product::setDescription);
+//        grid.getEditor().setEnabled(true);
+        grid.addColumn(Product::getCaption).setCaption("Caption");
+        grid.addColumn(Product::getDescription).setCaption("Description");
+        //.setEditorComponent(new TextField(), Product::setDescription);
         grid.addColumn(Product::getPrice).setCaption("Price");
+
         grid.setSelectionMode(Grid.SelectionMode.SINGLE);
 
         grid.asSingleSelect().addValueChangeListener(selectionEvent -> {
@@ -69,16 +64,19 @@ public class WelcomeUI extends MainUI {
             editProductButton.setEnabled(selectedProduct != null);
         });
 
-        addProductButton.addClickListener(event -> getPage().setLocation(ProductEditor.NAME));
+        addProductButton.addClickListener(event -> {
+            VaadinSession.getCurrent().setAttribute("editProduct", null);
+            getPage().setLocation(ProductEditor.NAME);
+        });
         addProductButton.setIcon(VaadinIcons.PLUS);
 
         editProductButton.setEnabled(false);
         editProductButton.setIcon(VaadinIcons.EDIT);
         editProductButton.addClickListener(event -> {
-            //TODO Edit current item
-            ProductEditor productEditor = new ProductEditor();
-//            ((Product) grid.getSelectedItems().iterator().next())
-            getPage().setLocation(productEditor.getPageName());
+            Product editProduct = grid.getSelectedItems().iterator().next();
+            // move parameters between UI
+            VaadinSession.getCurrent().setAttribute("editProduct", editProduct);
+            getPage().setLocation(ProductEditor.NAME);
         });
 
         deleteProductButton.setEnabled(false);

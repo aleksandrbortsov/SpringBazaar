@@ -13,9 +13,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@SpringUI(path = "/accessDenied")
+@SpringUI(path = AccessDeniedUI.NAME)
 @Theme("valo")
 public class AccessDeniedUI extends UI {
+    public static final String NAME="/accessDenied";
     private static final Logger LOGGER = LoggerFactory.getLogger(AccessDeniedUI.class);
 
     @Autowired

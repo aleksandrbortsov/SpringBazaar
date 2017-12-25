@@ -29,7 +29,7 @@ import java.util.Objects;
 public class RegistrationUI extends UI {
     public static final String NAME = "/registration";
     private static final Logger LOGGER = LoggerFactory.getLogger(RegistrationUI.class);
-    public static final String PREFIX_ROLE = "ROLE_";
+    private static final String PREFIX_ROLE = "ROLE_";
 
     private static int tabIndex = 0;
     private final TextField userFirstName = new TextField();
