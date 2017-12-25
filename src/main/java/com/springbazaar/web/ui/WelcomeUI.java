@@ -4,6 +4,7 @@ import com.springbazaar.domain.Product;
 import com.springbazaar.domain.User;
 import com.springbazaar.service.ProductService;
 import com.springbazaar.web.ui.editor.ProductEditor;
+import com.springbazaar.web.ui.tool.SharedTag;
 import com.vaadin.annotations.Theme;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Page;
@@ -65,7 +66,7 @@ public class WelcomeUI extends MainUI {
         });
 
         addProductButton.addClickListener(event -> {
-            VaadinSession.getCurrent().setAttribute("editProduct", null);
+            VaadinSession.getCurrent().setAttribute(SharedTag.EDIT_PRODUCT_TAG, null);
             getPage().setLocation(ProductEditor.NAME);
         });
         addProductButton.setIcon(VaadinIcons.PLUS);
@@ -75,7 +76,7 @@ public class WelcomeUI extends MainUI {
         editProductButton.addClickListener(event -> {
             Product editProduct = grid.getSelectedItems().iterator().next();
             // move parameters between UI
-            VaadinSession.getCurrent().setAttribute("editProduct", editProduct);
+            VaadinSession.getCurrent().setAttribute(SharedTag.EDIT_PRODUCT_TAG, editProduct);
             getPage().setLocation(ProductEditor.NAME);
         });
 

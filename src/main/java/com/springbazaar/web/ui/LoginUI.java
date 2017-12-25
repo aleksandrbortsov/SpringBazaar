@@ -57,7 +57,7 @@ public class LoginUI extends UI {
 
     private void loginButtonClick(Button.ClickEvent e) {
         if (securityService.login(username.getValue(), password.getValue())) {
-            getPage().setLocation("/welcome");
+            getPage().setLocation(WelcomeUI.NAME);
         }
     }
 }

@@ -6,6 +6,7 @@ import com.springbazaar.domain.User;
 import com.springbazaar.service.PersonService;
 import com.springbazaar.service.ProductService;
 import com.springbazaar.web.ui.MainUI;
+import com.springbazaar.web.ui.tool.SharedTag;
 import com.springbazaar.web.ui.WelcomeUI;
 import com.vaadin.annotations.Theme;
 import com.vaadin.data.BeanValidationBinder;
@@ -64,7 +65,7 @@ public class ProductEditor extends MainUI {
                 .bind("price");
 
         Product editProduct =
-                (Product) VaadinSession.getCurrent().getAttribute("editProduct");
+                (Product) VaadinSession.getCurrent().getAttribute(SharedTag.EDIT_PRODUCT_TAG);
         if (editProduct != null) {
             productCaption.setValue(editProduct.getCaption());
             productDescription.setValue(editProduct.getDescription());
