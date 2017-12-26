@@ -1,6 +1,7 @@
 package com.springbazaar.web.ui;
 
 import com.springbazaar.service.security.SecurityService;
+import com.springbazaar.web.ui.tool.component.RegisterLink;
 import com.vaadin.annotations.Theme;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.icons.VaadinIcons;
@@ -12,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @SpringUI(path = LoginUI.NAME)
 @Theme("valo")
 public class LoginUI extends UI {
-    public static final String NAME="/login";
+    public static final String NAME = "/login";
 
     private final SecurityService securityService;
 
@@ -20,6 +21,7 @@ public class LoginUI extends UI {
     private final PasswordField password = new PasswordField("Password:");
     private final CheckBox rememberMe = new CheckBox("Remember me");
     private final Button loginButton = new Button("Login", this::loginButtonClick);
+    private final RegisterLink registerLink = new RegisterLink();
 
     @Autowired
     public LoginUI(SecurityService securityService) {
@@ -42,10 +44,13 @@ public class LoginUI extends UI {
         loginForm.addComponent(password);
 
         loginForm.addComponent(rememberMe);
+
         loginButton.setIcon(VaadinIcons.KEY);
         loginButton.setDisableOnClick(true);
         loginButton.setClickShortcut(ShortcutAction.KeyCode.ENTER);
-        loginForm.addComponent(loginButton);
+        HorizontalLayout buttonsLayout = new HorizontalLayout(loginButton, registerLink);
+
+        loginForm.addComponent(buttonsLayout);
 
         setFocusedComponent(username);
         VerticalLayout rootUi = new VerticalLayout(loginForm);
@@ -58,6 +63,6 @@ public class LoginUI extends UI {
     private void loginButtonClick(Button.ClickEvent e) {
         if (securityService.login(username.getValue(), password.getValue())) {
             getPage().setLocation(WelcomeUI.NAME);
-        }
+        } else e.getButton().setEnabled(true);
     }
 }

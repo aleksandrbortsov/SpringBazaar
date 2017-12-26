@@ -31,7 +31,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             Notification.show("Authentication error",
                     "Authenticate failed. Please check username/password",
                     Notification.Type.ERROR_MESSAGE);
-            throw new UsernameNotFoundException("Username " + username + " not found");
+            return null;
         } else return user;
     }
 }

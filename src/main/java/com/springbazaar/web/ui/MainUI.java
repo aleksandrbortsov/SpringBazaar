@@ -16,7 +16,7 @@ public class MainUI extends UI {
         }
     }
 
-    private boolean isUserAnonymous() {
+    public static boolean isUserAnonymous() {
         return SecurityContextHolder.getContext().getAuthentication() instanceof AnonymousAuthenticationToken;
     }
 

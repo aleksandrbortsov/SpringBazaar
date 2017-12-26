@@ -1,4 +1,4 @@
-package com.springbazaar.web.ui.editor;
+package com.springbazaar.web.ui.tool.editor;
 
 import com.springbazaar.domain.Person;
 import com.springbazaar.domain.Product;

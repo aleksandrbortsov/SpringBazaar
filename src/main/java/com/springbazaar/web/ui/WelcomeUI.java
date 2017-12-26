@@ -3,7 +3,8 @@ package com.springbazaar.web.ui;
 import com.springbazaar.domain.Product;
 import com.springbazaar.domain.User;
 import com.springbazaar.service.ProductService;
-import com.springbazaar.web.ui.editor.ProductEditor;
+import com.springbazaar.web.ui.tool.component.LogoutLink;
+import com.springbazaar.web.ui.tool.editor.ProductEditor;
 import com.springbazaar.web.ui.tool.SharedTag;
 import com.vaadin.annotations.Theme;
 import com.vaadin.icons.VaadinIcons;
@@ -24,6 +25,7 @@ public class WelcomeUI extends MainUI {
     public static final String NAME = "/welcome";
     private final ProductService productService;
     private final Label loggedUsername = new Label("Username");
+    private final LogoutLink logoutLink = new LogoutLink();
     private final Button addProductButton = new Button("Add");
     private final Button editProductButton = new Button("Edit");
     private final Button deleteProductButton = new Button("Delete");
@@ -42,6 +44,8 @@ public class WelcomeUI extends MainUI {
         User currentUser = getCurrentUser();
         loggedUsername.setValue("Welcome, " +
                 (currentUser != null ? currentUser.getPerson().getShortName() : "") + "!");
+
+        logoutLink.updateVisibility();
 
         List<Product> product = new ArrayList<>();
         if (currentUser != null) {
@@ -75,7 +79,7 @@ public class WelcomeUI extends MainUI {
         editProductButton.setIcon(VaadinIcons.EDIT);
         editProductButton.addClickListener(event -> {
             Product editProduct = grid.getSelectedItems().iterator().next();
-            // move parameters between UI
+            // exchange parameters between UI
             VaadinSession.getCurrent().setAttribute(SharedTag.EDIT_PRODUCT_TAG, editProduct);
             getPage().setLocation(ProductEditor.NAME);
         });
@@ -93,8 +97,8 @@ public class WelcomeUI extends MainUI {
             deleteProductButton.setEnabled(false);
         });
 
-        HorizontalLayout buttons = new HorizontalLayout(addProductButton, editProductButton, deleteProductButton);
-        VerticalLayout fields = new VerticalLayout(loggedUsername, grid, buttons);
+        HorizontalLayout buttonsLayout = new HorizontalLayout(addProductButton, editProductButton, deleteProductButton);
+        VerticalLayout fields = new VerticalLayout(loggedUsername, logoutLink, grid, buttonsLayout);
         fields.setSpacing(true);
         fields.setMargin(new MarginInfo(true, true, true, false));
         fields.setSizeUndefined();
