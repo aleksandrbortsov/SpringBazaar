@@ -8,8 +8,6 @@ import com.springbazaar.domain.util.type.RoleType;
 import com.springbazaar.service.PersonService;
 import com.springbazaar.service.ProductService;
 import com.springbazaar.service.UserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.ApplicationContext;
@@ -22,8 +20,6 @@ import java.util.*;
 
 import static java.lang.System.exit;
 
-//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
 //@Component
 public class ApplicationCommandLineRunner implements CommandLineRunner {
     private static final String DELIMITER = "------------------------------------>";
@@ -32,14 +28,11 @@ public class ApplicationCommandLineRunner implements CommandLineRunner {
     private final PersonService personService;
     private final ProductService productService;
     private final ApplicationContext applicationContext;
-//    private final BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
-    public ApplicationCommandLineRunner(//BCryptPasswordEncoder passwordEncoder,
-                                        ApplicationContext applicationContext,
+    public ApplicationCommandLineRunner(ApplicationContext applicationContext,
                                         UserService userService,
                                         DataSource dataSource, PersonService personService, ProductService productService) {
-//        this.passwordEncoder = passwordEncoder;
         this.applicationContext = applicationContext;
         this.personService = personService;
         this.userService = userService;

@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 //import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
@@ -29,18 +30,18 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PersonRepository personRepository;
-//    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository,
                            RoleRepository roleRepository,
-                           PersonRepository personRepository) {
+                           PersonRepository personRepository,
+                           BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.personRepository = personRepository;
-
-//        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     public User saveOrUpdate(User userForm, Person personForm, List<String> roleForm) {
@@ -59,8 +60,8 @@ public class UserServiceImpl implements UserService {
             }
             roles.add(userRole);
         }
-        //TODO encode pass
-//        userForm.setPassword(bCryptPasswordEncoder.encode(userForm.getPassword()));
+
+        userForm.setPassword(bCryptPasswordEncoder.encode(userForm.getPassword()));
 
         personForm.setUser(userForm);
         personForm.setEmail(userForm.getUsername());
