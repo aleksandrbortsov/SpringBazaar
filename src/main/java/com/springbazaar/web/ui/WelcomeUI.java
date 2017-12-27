@@ -4,14 +4,11 @@ import com.springbazaar.domain.Product;
 import com.springbazaar.domain.User;
 import com.springbazaar.service.ProductService;
 import com.springbazaar.web.ui.tool.component.LogoutLink;
-import com.springbazaar.web.ui.tool.editor.ProductEditor;
-import com.springbazaar.web.ui.tool.SharedTag;
+import com.springbazaar.web.ui.tool.component.ProductContainer;
 import com.vaadin.annotations.Theme;
-import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.VaadinSession;
-import com.vaadin.shared.ui.MarginInfo;
+import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,14 +20,9 @@ import java.util.List;
 @SpringUI(path = WelcomeUI.NAME)
 public class WelcomeUI extends MainUI {
     public static final String NAME = "/welcome";
-    private final ProductService productService;
     private final Label loggedUsername = new Label("Username");
     private final LogoutLink logoutLink = new LogoutLink();
-    private final Button addProductButton = new Button("Add");
-    private final Button editProductButton = new Button("Edit");
-    private final Button deleteProductButton = new Button("Delete");
-    private final Grid<Product> grid = new Grid<>("All products");
-    private Product selectedProduct;
+    private final ProductService productService;
 
     @Autowired
     public WelcomeUI(ProductService productService) {
@@ -44,69 +36,36 @@ public class WelcomeUI extends MainUI {
         User currentUser = getCurrentUser();
         loggedUsername.setValue("Welcome, " +
                 (currentUser != null ? currentUser.getPerson().getShortName() : "") + "!");
-
         logoutLink.updateVisibility();
+        final HorizontalLayout topLayout = new HorizontalLayout(loggedUsername, logoutLink);
 
-        List<Product> product = new ArrayList<>();
-        if (currentUser != null) {
-            product.addAll(productService.listAllByPerson(currentUser.getPerson()));
-        }
-        grid.setItems(product);
-//        grid.getEditor().setEnabled(true);
-        grid.addColumn(Product::getCaption).setCaption("Caption");
-        grid.addColumn(Product::getDescription).setCaption("Description");
-        //.setEditorComponent(new TextField(), Product::setDescription);
-        grid.addColumn(Product::getPrice).setCaption("Price");
+        List<Product> products = getProductItems(currentUser);
 
-        grid.setSelectionMode(Grid.SelectionMode.SINGLE);
+        /*Tab Sheet*/
+        final TabSheet mainTabSheet = new TabSheet();
+        mainTabSheet.setSizeFull();
+        mainTabSheet.addTab(new ProductContainer(products, productService), "Products");
+//TODO Orders tab
+        final Label label = new Label("all orders table", ContentMode.HTML);
+        label.setWidth(100.0f, Unit.PERCENTAGE);
+        final VerticalLayout layout = new VerticalLayout(label);
+        layout.setMargin(true);
+        mainTabSheet.addTab(label, "Orders");
+        /*Tab Sheet*/
 
-        grid.asSingleSelect().addValueChangeListener(selectionEvent -> {
-            selectedProduct = selectionEvent.getValue();
-
-        });
-        grid.addSelectionListener(selectionEvent -> {
-            deleteProductButton.setEnabled(selectedProduct != null);
-            editProductButton.setEnabled(selectedProduct != null);
-        });
-
-        addProductButton.addClickListener(event -> {
-            VaadinSession.getCurrent().setAttribute(SharedTag.EDIT_PRODUCT_TAG, null);
-            getPage().setLocation(ProductEditor.NAME);
-        });
-        addProductButton.setIcon(VaadinIcons.PLUS);
-
-        editProductButton.setEnabled(false);
-        editProductButton.setIcon(VaadinIcons.EDIT);
-        editProductButton.addClickListener(event -> {
-            Product editProduct = grid.getSelectedItems().iterator().next();
-            // exchange parameters between UI
-            VaadinSession.getCurrent().setAttribute(SharedTag.EDIT_PRODUCT_TAG, editProduct);
-            getPage().setLocation(ProductEditor.NAME);
-        });
-
-        deleteProductButton.setEnabled(false);
-        deleteProductButton.setIcon(VaadinIcons.TRASH);
-        deleteProductButton.addClickListener(event -> {
-            product.remove(selectedProduct);
-            productService.delete(selectedProduct);
-            grid.getDataProvider().refreshAll();
-            Notification.show("Product " + selectedProduct.getCaption() + " has been deleted",
-                    Notification.Type.TRAY_NOTIFICATION);
-            selectedProduct = null;
-            editProductButton.setEnabled(false);
-            deleteProductButton.setEnabled(false);
-        });
-
-        HorizontalLayout buttonsLayout = new HorizontalLayout(addProductButton, editProductButton, deleteProductButton);
-        VerticalLayout fields = new VerticalLayout(loggedUsername, logoutLink, grid, buttonsLayout);
-        fields.setSpacing(true);
-        fields.setMargin(new MarginInfo(true, true, true, false));
-        fields.setSizeUndefined();
-
-        VerticalLayout uiLayout = new VerticalLayout(fields);
+        VerticalLayout uiLayout = new VerticalLayout(topLayout, mainTabSheet);
         uiLayout.setSizeFull();
-        uiLayout.setComponentAlignment(fields, Alignment.TOP_LEFT);
-
-        setContent(uiLayout);
+        VerticalLayout rootLayout = new VerticalLayout(uiLayout);
+        rootLayout.setComponentAlignment(uiLayout, Alignment.TOP_LEFT);
+        setContent(rootLayout);
     }
+
+    private List<Product> getProductItems(User currentUser) {
+        List<Product> products = new ArrayList<>();
+        if (currentUser != null) {
+            products.addAll(productService.listAllByPerson(currentUser.getPerson()));
+        }
+        return products;
+    }
+
 }
