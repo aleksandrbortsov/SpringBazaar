@@ -16,6 +16,7 @@ import com.vaadin.server.Sizeable;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.*;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,11 +27,10 @@ import java.util.Objects;
 
 @SpringUI(path = RegistrationUI.NAME)
 @Theme("valo")
+@Slf4j
 public class RegistrationUI extends UI {
     public static final String NAME = "/registration";
-    private static final Logger LOGGER = LoggerFactory.getLogger(RegistrationUI.class);
     private static final String PREFIX_ROLE = "ROLE_";
-
     private static int tabIndex = 0;
     private final TextField userFirstName = new TextField();
     private final TextField userMiddleName = new TextField();
@@ -135,7 +135,7 @@ public class RegistrationUI extends UI {
             Person person = new Person(fullNameBeanValidationBinder.getBean());
             userService.saveOrUpdate(user, person, roles);
             securityService.login(username.getValue(), password.getValue());
-            LOGGER.debug("New User " + user + " has been registered");
+            log.debug("New User " + user + " has been registered");
             Notification.show("User " + user.getUsername() + " has been registered",
                     Notification.Type.TRAY_NOTIFICATION);
             getPage().setLocation("/welcome");
