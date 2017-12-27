@@ -1,5 +1,6 @@
 package com.springbazaar.domain;
 
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -11,6 +12,10 @@ import java.util.Set;
 
 @Entity
 @Table(name = "SB_USERS")
+@Getter
+@Setter
+@NoArgsConstructor
+@ToString(exclude = "password")
 public class User implements Serializable, UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,7 +36,6 @@ public class User implements Serializable, UserDetails {
     @OneToOne(cascade = CascadeType.ALL)
     private Person person;
 
-
     private boolean accountNonExpired = true;
 
     private boolean accountNonLocked = true;
@@ -40,9 +44,6 @@ public class User implements Serializable, UserDetails {
 
     private boolean state = true;
 
-
-    public User() {
-    }
 
     public User(String username, String password) {
         this.username = username;
@@ -54,71 +55,6 @@ public class User implements Serializable, UserDetails {
         this.password = password;
         this.roles = roles;
         this.person = person;
-    }
-
-    public User(String username,
-                String password,
-                Set<Role> roles,
-                Person person,
-                boolean accountNonExpired,
-                boolean accountNonLocked,
-                boolean credentialsNonExpired,
-                boolean state) {
-        this.username = username;
-        this.password = password;
-        this.roles = roles;
-        this.person = person;
-        this.accountNonExpired = accountNonExpired;
-        this.accountNonLocked = accountNonLocked;
-        this.credentialsNonExpired = credentialsNonExpired;
-        this.state = state;
-    }
-
-    public BigInteger getId() {
-        return id;
-    }
-
-    public void setId(BigInteger id) {
-        this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String userName) {
-        this.username = userName;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public Person getPerson() {
-        return person;
-    }
-
-    public void setPerson(Person person) {
-        this.person = person;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return accountNonExpired;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return accountNonLocked;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return credentialsNonExpired;
     }
 
     @Override
@@ -133,15 +69,5 @@ public class User implements Serializable, UserDetails {
 
     public void setAuthorities(Set<Role> authorities) {
         this.roles = authorities;
-    }
-
-    //TODO equals , hashCode, toString methods
-    @Override
-    public String toString() {
-        return "User {ID = " + id
-                + ", username = " + username
-                + ", role {" + roles + "}"
-                + ", " + person
-                + "}";
     }
 }

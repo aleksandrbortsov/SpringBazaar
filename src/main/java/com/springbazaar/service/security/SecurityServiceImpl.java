@@ -1,8 +1,6 @@
 package com.springbazaar.service.security;
 
-import com.springbazaar.web.ui.RegistrationUI;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -11,15 +9,18 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
+
 @Service
+@Slf4j
 public class SecurityServiceImpl implements SecurityService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RegistrationUI.class);
+    private final AuthenticationManager authenticationManager;
+    private final UserDetailsService userDetailsService;
+
     @Autowired
-    private AuthenticationManager authenticationManager;
-    @Autowired
-    private UserDetailsService userDetailsService;
-//    @Autowired
-//    BCryptPasswordEncoder bCryptPasswordEncoder;
+    public SecurityServiceImpl(AuthenticationManager authenticationManager, UserDetailsService userDetailsService) {
+        this.authenticationManager = authenticationManager;
+        this.userDetailsService = userDetailsService;
+    }
 
     @Override
     public String findLoggedInUsername() {
@@ -41,10 +42,10 @@ public class SecurityServiceImpl implements SecurityService {
 
             if (token.isAuthenticated()) {
                 SecurityContextHolder.getContext().setAuthentication(token);
-                LOGGER.debug("Auto login {} successfully!", username);
+                log.debug("Auto login {} successfully!", username);
                 return true;
             } else {
-                LOGGER.debug("Authenticate username {} failed!", username);
+                log.debug("Authenticate username {} failed!", username);
                 return false;
             }
         }

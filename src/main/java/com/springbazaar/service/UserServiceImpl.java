@@ -9,12 +9,10 @@ import com.springbazaar.repository.PersonRepository;
 import com.springbazaar.repository.RoleRepository;
 import com.springbazaar.repository.UserRepository;
 import com.vaadin.ui.Notification;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
-//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,9 +22,8 @@ import java.util.List;
 import java.util.Set;
 
 @Service
+@Slf4j
 public class UserServiceImpl implements UserService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
-
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PersonRepository personRepository;
@@ -45,10 +42,10 @@ public class UserServiceImpl implements UserService {
     }
 
     public User saveOrUpdate(User userForm, Person personForm, List<String> roleForm) {
-        LOGGER.debug("Save/Update User Service started");
+        log.debug("Save/Update User Service started");
         if (isUsernameExist(userForm.getUsername())) {
             String errorMessage = "User with username " + userForm.getUsername() + " already exist.";
-            LOGGER.error(errorMessage);
+            log.error(errorMessage);
             Notification.show("Authentication error", errorMessage, Notification.Type.ERROR_MESSAGE);
             throw new UserAuthenticationException(errorMessage);
         }
@@ -70,7 +67,7 @@ public class UserServiceImpl implements UserService {
         userForm.setAuthorities(roles);
         roleRepository.save(roles);
         userRepository.save(userForm);
-        LOGGER.debug(userForm.toString() + " has been registered");
+        log.debug(userForm.toString() + " has been registered");
         return userForm;
     }
 
