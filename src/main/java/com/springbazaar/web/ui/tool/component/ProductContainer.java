@@ -2,7 +2,6 @@ package com.springbazaar.web.ui.tool.component;
 
 import com.springbazaar.domain.Product;
 import com.springbazaar.service.ProductService;
-import com.springbazaar.web.ui.tool.ProductDataProvider;
 import com.springbazaar.web.ui.tool.SharedTag;
 import com.springbazaar.web.ui.tool.editor.ProductEditor;
 import com.vaadin.data.provider.ListDataProvider;
@@ -15,7 +14,6 @@ import com.vaadin.ui.themes.ValoTheme;
 public class ProductContainer extends CustomComponent {
     private final Button addButton = new Button("Add");
     private final Button editButton = new Button("Edit");
-    private final Button deleteButton = new Button("Delete");
     private final Grid<Product> grid = new Grid<>("All products");
     private Product selectedProduct;
 
@@ -23,11 +21,28 @@ public class ProductContainer extends CustomComponent {
     public ProductContainer(ListDataProvider productProvider,
 //                            ProductDataProvider productProvider,
                             ProductService productService) {
-//        grid.getEditor().setEnabled(true);
+        final SafeDeleteButton deleteButton = new SafeDeleteButton("Delete",
+                "Are you sure to delete selected product(s)?", null);
+        Button.ClickListener yesListener = new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                productProvider.getItems().remove(selectedProduct);
+                productService.delete(selectedProduct);
+                grid.getDataProvider().refreshAll();
+                Notification.show("Product " + selectedProduct.getCaption() + " has been deleted",
+                        Notification.Type.TRAY_NOTIFICATION);
+                selectedProduct = null;
+                editButton.setEnabled(false);
+                deleteButton.setEnabled(false);
+            }
+        };
+        deleteButton.setEnabled(false);
+        deleteButton.setYesListener(yesListener);
+
+
         grid.addColumn(Product::getId).setCaption("#");
         grid.addColumn(Product::getCaption).setCaption("Caption").setId("ProductCaptionColumn");
         grid.addColumn(Product::getDescription).setCaption("Description");
-        //.setEditorComponent(new TextField(), Product::setDescription);
         grid.addColumn(Product::getPrice).setCaption("Price");
         grid.setSizeFull();
         grid.setSelectionMode(Grid.SelectionMode.SINGLE);
@@ -71,18 +86,6 @@ public class ProductContainer extends CustomComponent {
             getUI().getPage().setLocation(ProductEditor.NAME);
         });
 
-        deleteButton.setEnabled(false);
-        deleteButton.setIcon(VaadinIcons.TRASH);
-        deleteButton.addClickListener(event -> {
-//            productProvider.getItems().remove(selectedProduct);
-            productService.delete(selectedProduct);
-            grid.getDataProvider().refreshAll();
-            Notification.show("Product " + selectedProduct.getCaption() + " has been deleted",
-                    Notification.Type.TRAY_NOTIFICATION);
-            selectedProduct = null;
-            editButton.setEnabled(false);
-            deleteButton.setEnabled(false);
-        });
 
         HorizontalLayout buttonsLayout = new HorizontalLayout(addButton, editButton, deleteButton);
 
