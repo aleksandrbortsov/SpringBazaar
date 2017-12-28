@@ -42,9 +42,11 @@ public class ApplicationCommandLineRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        inspectLoadedBeans();
+//        inspectLoadedBeans();
         System.out.println(String.format("%1$tF %1$tT %2$-4s DataSource = " + dataSource,
                 Calendar.getInstance().getTime(), DELIMITER));
+
+//        createProducts(personService.getById(new BigInteger("2")), 50000);
 
         createTestData();
 
@@ -55,45 +57,30 @@ public class ApplicationCommandLineRunner implements CommandLineRunner {
 
     private void createTestData() {
         try {
-            FullName personFullName = new FullName("First Admin Name",
-                    "Middle Admin Name",
-                    "Last Admin Name");
-            Person adminPerson = new Person(personFullName);
-            User adminUser = new User("admin@email.com", "admin@email.com");
-            userService.saveOrUpdate(adminUser, adminPerson, Collections.singletonList(RoleType.ROLE_ADMIN.toString()));
+            Person newPerson = getPerson("First Admin Name", "Middle Admin Name", "Last Admin Name");
+            createUser("admin@email.com",
+                    "admin@email.com",
+                    newPerson,
+                    RoleType.ROLE_ADMIN.toString());
 
+            newPerson = getPerson("First Seller Name", "Middle Seller Name", "Last Seller Name");
+            createUser("seller@email.com",
+                    "seller@email.com",
+                    newPerson,
+                    RoleType.ROLE_SELLER.toString());
 
-            personFullName = new FullName("First Seller Name",
-                    "Middle Seller Name",
-                    "Last Seller Name");
-            Person sellerPerson = new Person(personFullName);
-            User sellerUser = new User("seller@email.com", "seller@email.com");
-            userService.saveOrUpdate(sellerUser, sellerPerson, Collections.singletonList(RoleType.ROLE_SELLER.toString()));
+            createProducts(newPerson, 5);
 
-            for (int i = 0; i < 5; i++) {
-                Random obj = new Random(i);
-                long randomPrice = obj.nextInt(1000);
-                Product newProduct = new Product("Product #" + i,
-                        "description product",
-                        new BigDecimal(randomPrice),
-                        null,
-                        Calendar.getInstance().getTime(),
-                        new BigInteger("1"));
-                Person person = personService.getById(sellerPerson.getId());
-                newProduct.setPerson(person);
-                productService.saveOrUpdate(newProduct);
-            }
+            newPerson = getPerson("First Buyer Name", "Middle Buyer Name", "Last Buyer Name");
+            createUser("buyer@email.com",
+                    "buyer@email.com",
+                    newPerson,
+                    RoleType.ROLE_BUYER.toString());
 
-            personFullName = new FullName("First Buyer Name",
-                    "Middle Buyer Name",
-                    "Last Buyer Name");
-            Person buyerPerson = new Person(personFullName);
-            User buyerUser = new User("buyer@email.com", "buyer@email.com");
-            userService.saveOrUpdate(buyerUser, buyerPerson, Collections.singletonList(RoleType.ROLE_BUYER.toString()));
 
             List<Product> products = productService.listAll();
-
-            printDataToConsole(adminUser, sellerUser, buyerUser, products);
+            List<User> users = userService.listAll();
+            printDataToConsole(users, products);
 
         } finally {
             System.out.println("Creation test data completed. Comment annotation @Component of ApplicationCommandLineRunner.class");
@@ -101,15 +88,40 @@ public class ApplicationCommandLineRunner implements CommandLineRunner {
         }
     }
 
-    private void printDataToConsole(User adminUser, User sellerUser, User buyerUser, List<Product> products) {
+    private void createUser(String username, String password, Person person, String roles) {
+        User user = new User(username, password);
+        userService.saveOrUpdate(user, person, Collections.singletonList(roles));
+    }
+
+    private Person getPerson(String first, String middle, String last) {
+        FullName personFullName = new FullName(first, middle, last);
+        return new Person(personFullName);
+    }
+
+    private void createProducts(Person person, int count) {
+        for (int i = 1; i < count; i++) {
+            Random obj = new Random(i);
+            long randomPrice = obj.nextInt(1000);
+            Product newProduct = new Product("Product #" + i,
+                    "product belongs to " + person.getShortName(),
+                    new BigDecimal(randomPrice),
+                    null,
+                    Calendar.getInstance().getTime(),
+                    person.getId());
+            newProduct.setPerson(person);
+            productService.saveOrUpdate(newProduct);
+        }
+    }
+
+    private void printDataToConsole(List<User> users, List<Product> products) {
         System.out.println("Creation test data started");
-        System.out.println("Admin user created: " + adminUser.toString());
-        System.out.println("Seller user created: " + sellerUser.toString());
+        for (User user : users) {
+            System.out.println("User created: {}" + user.toString());
+        }
         System.out.println("Product list:");
         for (Product product : products) {
             System.out.println(product.toString());
         }
-        System.out.println("Buyer user created: " + buyerUser.toString());
     }
 
     private void inspectLoadedBeans() {

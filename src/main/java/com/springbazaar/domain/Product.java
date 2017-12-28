@@ -15,7 +15,7 @@ import java.util.Date;
 @Getter
 @Setter
 @NoArgsConstructor
-@ToString
+@ToString(exclude = "person", callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 public class Product extends StandardEntity {
     @Id

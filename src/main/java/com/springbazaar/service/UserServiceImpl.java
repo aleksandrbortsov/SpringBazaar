@@ -17,6 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -85,6 +86,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUserById(BigInteger id) {
         return userRepository.findOne(id);
+    }
+
+    @Override
+    public List<User> listAll() {
+        List<User> users = new ArrayList<>();
+        userRepository.findAll().forEach(users::add);
+        return users;
     }
 
     @Override

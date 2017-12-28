@@ -1,7 +1,10 @@
 package com.springbazaar.domain;
 
 import com.springbazaar.domain.util.type.RoleType;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
@@ -14,7 +17,7 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
-@ToString
+@ToString(exclude = "user")
 // TODO sort out with @EqualsAndHashCode(callSuper = false)
 public class Role implements Serializable, GrantedAuthority {
     @Id

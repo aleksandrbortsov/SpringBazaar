@@ -3,6 +3,8 @@ package com.springbazaar.service;
 import com.springbazaar.domain.Person;
 import com.springbazaar.domain.Product;
 import com.springbazaar.repository.ProductRepository;
+import com.springbazaar.repository.ProductRepositoryCustom;
+import com.vaadin.data.provider.QuerySortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,10 +16,12 @@ import java.util.List;
 public class ProductServiceImpl implements ProductService {
 
     private ProductRepository productRepository;
+    private ProductRepositoryCustom productRepositoryCustom;
 
     @Autowired
-    public ProductServiceImpl(ProductRepository productRepository) {
+    public ProductServiceImpl(ProductRepository productRepository, ProductRepositoryCustom productRepositoryCustom) {
         this.productRepository = productRepository;
+        this.productRepositoryCustom = productRepositoryCustom;
     }
 
     @Override
@@ -27,9 +31,16 @@ public class ProductServiceImpl implements ProductService {
         return products;
     }
 
-    @Override
-    public List<Product> listAllByPerson(Person person) {
+    public List<Product> listByPerson(Person person) {
         return productRepository.findAllByPerson(person);
+    }
+
+    @Override
+    public List<Product> listByPerson(String personIdFilter,
+                                      int limit,
+                                      int offset,
+                                      List<QuerySortOrder> sortOrders) {
+        return productRepositoryCustom.fetchProductsOfPerson(personIdFilter, limit, offset, sortOrders);
     }
 
     @Override
@@ -50,5 +61,10 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void delete(Product product) {
         productRepository.delete(product);
+    }
+
+    @Override
+    public int count(String filter) {
+        return productRepositoryCustom.countProducts(filter);
     }
 }

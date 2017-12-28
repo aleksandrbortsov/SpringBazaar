@@ -3,6 +3,7 @@ package com.springbazaar.domain.util;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.MappedSuperclass;
 import java.io.Serializable;
@@ -13,6 +14,7 @@ import java.util.Date;
 @Getter
 @Setter
 @NoArgsConstructor
+@ToString
 public class StandardEntity implements Serializable, Creatable {
     protected Date createdWhen;
     protected BigInteger createdBy;
