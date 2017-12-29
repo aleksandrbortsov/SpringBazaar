@@ -69,7 +69,7 @@ public class ApplicationCommandLineRunner implements CommandLineRunner {
                     newPerson,
                     RoleType.ROLE_SELLER.toString());
 
-            createProducts(newPerson, 5);
+            createProducts(newPerson, 50);
 
             newPerson = getPerson("First Buyer Name", "Middle Buyer Name", "Last Buyer Name");
             createUser("buyer@email.com",

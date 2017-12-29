@@ -4,12 +4,16 @@ import com.springbazaar.domain.Product;
 import com.springbazaar.service.ProductService;
 import com.springbazaar.web.ui.tool.SharedTag;
 import com.springbazaar.web.ui.tool.editor.ProductEditor;
+import com.vaadin.data.HasValue;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.*;
 import com.vaadin.ui.components.grid.HeaderRow;
+import com.vaadin.ui.renderers.NumberRenderer;
 import com.vaadin.ui.themes.ValoTheme;
+
+import java.text.DecimalFormat;
 
 public class ProductContainer extends CustomComponent {
     private final Button addButton = new Button("Add");
@@ -39,11 +43,12 @@ public class ProductContainer extends CustomComponent {
         deleteButton.setEnabled(false);
         deleteButton.setYesListener(yesListener);
 
+        DecimalFormat dollarFormat = new DecimalFormat("$##,##0.00");
 
         grid.addColumn(Product::getId).setCaption("#");
         grid.addColumn(Product::getCaption).setCaption("Caption").setId("ProductCaptionColumn");
         grid.addColumn(Product::getDescription).setCaption("Description");
-        grid.addColumn(Product::getPrice).setCaption("Price");
+        grid.addColumn(Product::getPrice, new NumberRenderer(dollarFormat)).setCaption("Price");
         grid.setSizeFull();
         grid.setSelectionMode(Grid.SelectionMode.SINGLE);
 
@@ -57,16 +62,8 @@ public class ProductContainer extends CustomComponent {
         });
         HeaderRow headerRow = grid.appendHeaderRow();
         TextField captionFilter = getFilterField();
-//               captionFilter.addValueChangeListener(event -> {
-//            productProvider.setFilter(Product::getCaption, productCaption -> {
-//                if (productCaption == null) {
-//                    return false;
-//                }
-//                String productCaptionLower = productCaption.toLowerCase();
-//                String filterLower = event.getValue().toLowerCase();
-//                return productCaptionLower.contains(filterLower);
-//            });
-//        });
+        captionFilter.addValueChangeListener(this::onNameFilterTextChange);
+
         headerRow.getCell("ProductCaptionColumn").setComponent(captionFilter);
 
         grid.setDataProvider(productProvider);
@@ -91,6 +88,15 @@ public class ProductContainer extends CustomComponent {
 
         VerticalLayout mainLayout = new VerticalLayout(grid, buttonsLayout);
         setCompositionRoot(mainLayout);
+    }
+
+    private void onNameFilterTextChange(HasValue.ValueChangeEvent<String> event) {
+        ListDataProvider<Product> dataProvider = (ListDataProvider<Product>) grid.getDataProvider();
+        dataProvider.setFilter(Product::getCaption, s -> caseInsensitiveContains(s, event.getValue()));
+    }
+
+    private Boolean caseInsensitiveContains(String where, String what) {
+        return where.toLowerCase().contains(what.toLowerCase());
     }
 
     private TextField getFilterField() {
