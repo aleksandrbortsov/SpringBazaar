@@ -4,16 +4,16 @@ import com.vaadin.icons.VaadinIcons;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.*;
 
-public class SafeDeleteButton extends CustomComponent {
+public class DeleteWithConfirmButton extends CustomComponent {
 
     private final Label infoLabel = new Label("", ContentMode.HTML);
     private final Button confirmButton = new Button("Confirm", VaadinIcons.CHECK);
     private final Button cancelButton = new Button("Cancel", VaadinIcons.CLOSE);
     private final Window window = new Window();
 
-    public SafeDeleteButton(String caption,
-                            String popupText,
-                            Button.ClickListener yesListener) {
+    public DeleteWithConfirmButton(String caption,
+                                   String popupText,
+                                   Button.ClickListener yesListener) {
         VerticalLayout root = new VerticalLayout();
         setCompositionRoot(root);
         root.setSpacing(false);

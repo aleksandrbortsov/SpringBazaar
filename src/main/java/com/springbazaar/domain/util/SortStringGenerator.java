@@ -17,6 +17,7 @@ public class SortStringGenerator {
                 } else {
                     sortString = sortString + ", lower(" + sortOrder.getSorted() + ") " + order;
                 }
+                i++;
             }
         }
         return sortString;

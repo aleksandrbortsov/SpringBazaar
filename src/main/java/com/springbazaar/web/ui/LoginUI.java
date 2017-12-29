@@ -8,6 +8,7 @@ import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.*;
+import com.vaadin.ui.themes.ValoTheme;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @SpringUI(path = LoginUI.NAME)
@@ -20,6 +21,7 @@ public class LoginUI extends UI {
     private final TextField username = new TextField("Username:");
     private final PasswordField password = new PasswordField("Password:");
     private final CheckBox rememberMe = new CheckBox("Remember me");
+    private final Button forgotPassword = new Button("Forgot password?");
     private final Button loginButton = new Button("Login", this::loginButtonClick);
     private final RegisterLink registerLink = new RegisterLink();
 
@@ -44,6 +46,16 @@ public class LoginUI extends UI {
         loginForm.addComponent(password);
 
         loginForm.addComponent(rememberMe);
+
+        forgotPassword.addClickListener(new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                Notification.show("Hint: Try anything ;-)", Notification.Type.HUMANIZED_MESSAGE);
+            }
+        });
+        forgotPassword.addStyleName(ValoTheme.BUTTON_LINK);
+        forgotPassword.setHeight("25px");
+        loginForm.addComponent(forgotPassword);
 
         loginButton.setIcon(VaadinIcons.KEY);
         loginButton.setDisableOnClick(true);

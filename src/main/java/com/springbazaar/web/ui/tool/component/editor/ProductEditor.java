@@ -1,4 +1,4 @@
-package com.springbazaar.web.ui.tool.editor;
+package com.springbazaar.web.ui.tool.component.editor;
 
 import com.springbazaar.domain.Person;
 import com.springbazaar.domain.Product;
@@ -6,8 +6,8 @@ import com.springbazaar.domain.User;
 import com.springbazaar.service.PersonService;
 import com.springbazaar.service.ProductService;
 import com.springbazaar.web.ui.MainUI;
-import com.springbazaar.web.ui.tool.SharedTag;
 import com.springbazaar.web.ui.WelcomeUI;
+import com.springbazaar.web.ui.tool.SharedTag;
 import com.vaadin.annotations.Theme;
 import com.vaadin.data.BeanValidationBinder;
 import com.vaadin.data.Binder;
@@ -33,6 +33,7 @@ public class ProductEditor extends MainUI {
     private ProductService productService;
     @Autowired
     private PersonService personService;
+    private User user;
     private TextField productCaption = new TextField("Caption");
     private TextArea productDescription = new TextArea("Description");
     private TextField startPrice = new TextField("Start price");
@@ -64,16 +65,16 @@ public class ProductEditor extends MainUI {
                 .withConverter(new StringToBigDecimalConverter("Could not convert value"))
                 .bind("price");
 
-        Product editProduct =
+        Product selectedEditProduct =
                 (Product) VaadinSession.getCurrent().getAttribute(SharedTag.EDIT_PRODUCT_TAG);
-        if (editProduct != null) {
-            productCaption.setValue(editProduct.getCaption());
-            productDescription.setValue(editProduct.getDescription());
-            startPrice.setValue(editProduct.getPrice().toString());
+        if (selectedEditProduct != null) {
+            productCaption.setValue(selectedEditProduct.getCaption());
+            productDescription.setValue(selectedEditProduct.getDescription());
+            startPrice.setValue(selectedEditProduct.getPrice().toString());
             productButton.setCaption("Update");
             productButton.setIcon(VaadinIcons.FILE_REFRESH);
             productButton.setEnabled(true);
-        }else{
+        } else {
             productButton.setEnabled(false);
             productButton.setIcon(VaadinIcons.FILE_ADD);
         }
@@ -81,16 +82,16 @@ public class ProductEditor extends MainUI {
         productBeanValidationBinder.addStatusChangeListener(statusChangeEvent ->
                 productButton.setEnabled(productBeanValidationBinder.isValid()));
         productButton.addClickListener((Button.ClickListener) clickEvent -> {
-            User user = getCurrentUser();
+            user = getCurrentUser();
             if (user == null) return;
             Product productForSave;
-            if (editProduct == null) {
-                 productForSave = getProduct(user);
-                Person person = personService.getById(user.getPerson().getId());
-                productForSave.setPerson(person);
+            if (selectedEditProduct == null) {
+                productForSave = getProduct(user);
             } else {
-                productForSave = getProduct(editProduct);
+                productForSave = getProduct(selectedEditProduct);
             }
+            Person person = personService.getById(user.getPerson().getId());
+            productForSave.setPerson(person);
             productService.saveOrUpdate(productForSave);
             getPage().setLocation(WelcomeUI.NAME);
         });
@@ -111,15 +112,17 @@ public class ProductEditor extends MainUI {
         editProduct.setCaption(productCaption.getValue());
         editProduct.setDescription(productDescription.getValue());
         editProduct.setPrice(new BigDecimal(startPrice.getValue()));
+        editProduct.setCreatedWhen(Calendar.getInstance().getTime());
+        editProduct.setCreatedBy(user.getId());
         return editProduct;
     }
 
     private Product getProduct(User user) {
         return new Product(productCaption.getValue(),
-                            productDescription.getValue(),
-                            new BigDecimal("".equals(startPrice.getValue()) ? "0" : startPrice.getValue()),
-                            imageUrl.getValue(),
-                            Calendar.getInstance().getTime(),
-                            user.getId());
+                productDescription.getValue(),
+                new BigDecimal("".equals(startPrice.getValue()) ? "0" : startPrice.getValue()),
+                imageUrl.getValue(),
+                Calendar.getInstance().getTime(),
+                user.getId());
     }
 }

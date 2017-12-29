@@ -33,19 +33,20 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
                                                int offset,
                                                List<QuerySortOrder> sortOrders) {
         if (personIdFilter == null) {
+            //TODO remove 2
             personIdFilter = "2";
         }
-//        personIdFilter = "%" + filter.toLowerCase().trim() + "%";
+//        personIdFilter = "%" + personIdFilter.toLowerCase().trim() + "%";
 
-        if (sortOrders == null || sortOrders.isEmpty()) {
-            sortOrders = new ArrayList<>();
-            sortOrders.add(new QuerySortOrder("id", SortDirection.ASCENDING));
-        }
+//        if (sortOrders == null || sortOrders.isEmpty()) {
+//            sortOrders = new ArrayList<>();
+//            sortOrders.add(new QuerySortOrder("id", SortDirection.ASCENDING));
+//        }
 
         String sql = "SELECT * " +
                 "FROM sb_products " +
-                "WHERE person_id = ? "
-                + SortStringGenerator.generate(sortOrders) + " limit ? offset ?";
+                "WHERE person_id = ? " +
+                SortStringGenerator.generate(sortOrders) + " limit ? offset ?";
 
         return jdbcTemplate.query(sql, new Object[]{personIdFilter, limit, offset}, new RowMapper<Product>() {
             @Override
@@ -65,6 +66,7 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
     @Override
     public int countProducts(String personIdFilter) {
         if (personIdFilter == null) {
+            //TODO remove 2
             personIdFilter = "2";
         }
 //        personIdFilter = "%" + filter.toLowerCase().trim() + "%";
