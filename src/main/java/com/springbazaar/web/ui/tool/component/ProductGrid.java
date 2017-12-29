@@ -7,6 +7,7 @@ import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.renderers.HtmlRenderer;
 import com.vaadin.ui.renderers.NumberRenderer;
@@ -14,6 +15,7 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.util.Locale;
 
 public class ProductGrid extends Grid<Product> {
     public static final String PRODUCT_CAPTION_COLUMN_ID = "ProductCaptionColumnId";
@@ -78,12 +80,14 @@ public class ProductGrid extends Grid<Product> {
         return filter;
     }
 
+    //In-memory filtering text field
     private void onNameFilterTextChange(HasValue.ValueChangeEvent<String> event) {
         ProductDataProvider dataProvider = (ProductDataProvider) this.getDataProvider();
 //        dataProvider.setFilter(Product::getCaption, s -> caseInsensitiveContains(s, event.getValue()));
     }
 
     private Boolean caseInsensitiveContains(String where, String what) {
-        return where.toLowerCase().contains(what.toLowerCase());
+        Locale locale = UI.getCurrent().getLocale();
+        return where.toLowerCase(locale).contains(what.toLowerCase(locale));
     }
 }
