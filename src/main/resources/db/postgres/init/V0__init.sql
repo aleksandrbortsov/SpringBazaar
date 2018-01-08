@@ -1,5 +1,3 @@
-CREATE SCHEMA IF NOT EXISTS public AUTHORIZATION postgres;
-
 CREATE TABLE public.sb_users
 (
     id serial NOT NULL,
