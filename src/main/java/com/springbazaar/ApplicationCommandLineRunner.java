@@ -42,13 +42,13 @@ public class ApplicationCommandLineRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-//        inspectLoadedBeans();
+        inspectLoadedBeans();
         System.out.println(String.format("%1$tF %1$tT %2$-4s DataSource = " + dataSource,
                 Calendar.getInstance().getTime(), DELIMITER));
 
 //        createProducts(personService.getById(new BigInteger("2")), 20000);
 
-//        createTestData();
+        createTestData();
 
         System.out.println(String.format("%1$tF %1$tT %2$-4s Done!",
                 Calendar.getInstance().getTime(), DELIMITER));

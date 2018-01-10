@@ -11,6 +11,8 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.List;
 
 @SpringBootApplication // same as @Configuration @EnableAutoConfiguration @ComponentScan
 @Slf4j
@@ -33,13 +35,18 @@ public class Application {
     }
 
     private static void setFlywayRollingState(ApplicationContext context) {
+        List<String> activeProfiles = Arrays.asList(context.getEnvironment().getActiveProfiles());
         Flyway flyway = context.getBean(Flyway.class);
         String flywayState = getFlywayState(context, flyway);
-        //TODO determine current profile and set mysql flyway location
+
         if (flywayState.equals("update")) {
-            flyway.setLocations(DB_POSTGRES_UPDATE_LOCATION);
+            if (activeProfiles.contains("mysql")) {
+                flyway.setLocations(DB_MYSQL_UPDATE_LOCATION);
+            } else {
+                flyway.setLocations(DB_POSTGRES_UPDATE_LOCATION);
+            }
+            flyway.migrate();
         }
-        flyway.migrate();
     }
 
     private static String getFlywayState(ApplicationContext context, Flyway flyway) {

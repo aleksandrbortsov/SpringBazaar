@@ -19,9 +19,9 @@ public class WelcomeUI extends MainUI {
     public static final String NAME = "/welcome";
     private final Label loggedUsername = new Label("Username");
     private final LogoutLink logoutLink = new LogoutLink();
-    private ProductDataProvider productProvider;
-//    private ListDataProvider productProvider;
+    //    private ListDataProvider productProvider;
     private final ProductService productService;
+    private ProductDataProvider productProvider;
 
     @Autowired
     public WelcomeUI(ProductService productService) {
@@ -36,8 +36,7 @@ public class WelcomeUI extends MainUI {
         if (currentUser != null) {
             loggedUsername.setValue("Welcome, " + currentUser.getPerson().getShortName() + "!");
             logoutLink.updateVisibility();
-            productProvider =
-                    new ProductDataProvider(productService);
+            productProvider = new ProductDataProvider(productService);
 //            productProvider =
 //                    new ListDataProvider<>(productService.listByPerson(currentUser.getPerson()));
 

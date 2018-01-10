@@ -23,23 +23,19 @@ public class ProductManager extends CustomComponent {
                           ProductService productService) {
         productGrid.setDataProvider(productProvider);
 
-        productGrid.asSingleSelect().addValueChangeListener(selectionEvent -> {
-            selectedProduct = selectionEvent.getValue();
-        });
+        productGrid.asSingleSelect().addValueChangeListener(selectionEvent ->
+                selectedProduct = selectionEvent.getValue());
         productGrid.addSelectionListener(selectionEvent -> {
             deleteButton.setEnabled(selectedProduct != null);
             editButton.setEnabled(selectedProduct != null);
         });
 
-        Button.ClickListener yesListener = new Button.ClickListener() {
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                productService.delete(selectedProduct);
-                productGrid.getDataProvider().refreshAll();
-                Notification.show("Product " + selectedProduct.getCaption() + " has been deleted",
-                        Notification.Type.TRAY_NOTIFICATION);
-                cancelProductSelection();
-            }
+        Button.ClickListener yesListener = (Button.ClickListener) event -> {
+            productService.delete(selectedProduct);
+            productGrid.getDataProvider().refreshAll();
+            Notification.show("Product " + selectedProduct.getCaption() + " has been deleted",
+                    Notification.Type.TRAY_NOTIFICATION);
+            cancelProductSelection();
         };
         deleteButton.setEnabled(false);
         deleteButton.setYesListener(yesListener);
@@ -58,13 +54,11 @@ public class ProductManager extends CustomComponent {
             VaadinSession.getCurrent().setAttribute(SharedTag.EDIT_PRODUCT_TAG, editProduct);
             getUI().getPage().setLocation(ProductEditor.NAME);
         });
-
         HorizontalLayout buttonsLayout = new HorizontalLayout(addButton, editButton, deleteButton);
 
         VerticalLayout mainLayout = new VerticalLayout(productGrid, buttonsLayout);
         setCompositionRoot(mainLayout);
     }
-
 
     private void cancelProductSelection() {
         selectedProduct = null;
