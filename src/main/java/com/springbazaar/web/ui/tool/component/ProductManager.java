@@ -2,7 +2,6 @@ package com.springbazaar.web.ui.tool.component;
 
 import com.springbazaar.domain.Product;
 import com.springbazaar.service.ProductService;
-import com.springbazaar.web.ui.tool.ProductDataProvider;
 import com.springbazaar.web.ui.tool.SharedTag;
 import com.springbazaar.web.ui.tool.component.editor.ProductEditor;
 import com.vaadin.icons.VaadinIcons;
@@ -15,14 +14,11 @@ public class ProductManager extends CustomComponent {
             "Are you sure to delete selected product(s)?", null);
     private final Button addButton = new Button("Add");
     private final Button editButton = new Button("Edit");
-    private final ProductGrid productGrid = new ProductGrid("All products");
     private Product selectedProduct;
 
 
-    public ProductManager(ProductDataProvider productProvider,
-                          ProductService productService) {
-        productGrid.setDataProvider(productProvider);
-
+    public ProductManager(ProductService productService) {
+        ProductGrid productGrid = new ProductGrid("All products", productService);
         productGrid.asSingleSelect().addValueChangeListener(selectionEvent ->
                 selectedProduct = selectionEvent.getValue());
         productGrid.addSelectionListener(selectionEvent -> {

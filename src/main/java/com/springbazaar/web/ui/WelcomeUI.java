@@ -2,7 +2,6 @@ package com.springbazaar.web.ui;
 
 import com.springbazaar.domain.User;
 import com.springbazaar.service.ProductService;
-import com.springbazaar.web.ui.tool.ProductDataProvider;
 import com.springbazaar.web.ui.tool.component.LogoutLink;
 import com.springbazaar.web.ui.tool.component.ProductManager;
 import com.vaadin.annotations.Theme;
@@ -21,7 +20,7 @@ public class WelcomeUI extends MainUI {
     private final LogoutLink logoutLink = new LogoutLink();
     //    private ListDataProvider productProvider;
     private final ProductService productService;
-    private ProductDataProvider productProvider;
+
 
     @Autowired
     public WelcomeUI(ProductService productService) {
@@ -36,7 +35,7 @@ public class WelcomeUI extends MainUI {
         if (currentUser != null) {
             loggedUsername.setValue("Welcome, " + currentUser.getPerson().getShortName() + "!");
             logoutLink.updateVisibility();
-            productProvider = new ProductDataProvider(productService);
+            productService.setPerson(currentUser.getPerson());
 //            productProvider =
 //                    new ListDataProvider<>(productService.listByPerson(currentUser.getPerson()));
 
@@ -46,7 +45,7 @@ public class WelcomeUI extends MainUI {
         /*Tab Sheet*/
         final TabSheet mainTabSheet = new TabSheet();
         mainTabSheet.setSizeFull();
-        mainTabSheet.addTab(new ProductManager(productProvider, productService), "Products");
+        mainTabSheet.addTab(new ProductManager(productService), "Products");
 //TODO Orders tab
         final Label label = new Label("all orders table", ContentMode.HTML);
         label.setWidth(100.0f, Unit.PERCENTAGE);

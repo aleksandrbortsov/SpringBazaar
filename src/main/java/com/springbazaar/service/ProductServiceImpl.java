@@ -4,16 +4,25 @@ import com.springbazaar.domain.Person;
 import com.springbazaar.domain.Product;
 import com.springbazaar.repository.ProductRepository;
 import com.springbazaar.repository.ProductRepositoryCustom;
-import com.vaadin.data.provider.QuerySortOrder;
+import com.vaadin.data.provider.AbstractBackEndDataProvider;
+import com.vaadin.data.provider.Query;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Service
-public class ProductServiceImpl implements ProductService {
+@Slf4j
+public class ProductServiceImpl extends AbstractBackEndDataProvider<Product, String> implements ProductService {
+    @Getter
+    @Setter
+    private Person person;
 
     private ProductRepository productRepository;
     private ProductRepositoryCustom productRepositoryCustom;
@@ -33,14 +42,6 @@ public class ProductServiceImpl implements ProductService {
 
     public List<Product> listByPerson(Person person) {
         return productRepository.findAllByPerson(person);
-    }
-
-    @Override
-    public List<Product> listByPerson(String personIdFilter,
-                                      int limit,
-                                      int offset,
-                                      List<QuerySortOrder> sortOrders) {
-        return productRepositoryCustom.fetchProductsOfPerson(personIdFilter, limit, offset, sortOrders);
     }
 
     @Override
@@ -64,7 +65,26 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public int count(String filter) {
-        return productRepositoryCustom.countProducts(filter);
+    protected Stream<Product> fetchFromBackEnd(Query<Product, String> query) {
+        if (getFilter(query).isEmpty()) {
+            return productRepository.findAllByPerson(getPerson()).stream();
+        }
+        return
+                productRepositoryCustom.fetchProductsOfPerson(getPerson().getId(),
+                        getFilter(query),
+                        query.getLimit(),
+                        query.getOffset(),
+                        query.getSortOrders()
+                ).stream();
     }
+
+    private String getFilter(Query<Product, String> query) {
+        return query.getFilter().orElse("");
+    }
+
+    @Override
+    protected int sizeInBackEnd(Query<Product, String> query) {
+        return productRepositoryCustom.countProducts(getPerson().getId(), getFilter(query));
+    }
+
 }

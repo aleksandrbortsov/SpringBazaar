@@ -2,21 +2,17 @@ package com.springbazaar.service;
 
 import com.springbazaar.domain.Person;
 import com.springbazaar.domain.Product;
+import com.vaadin.data.provider.DataProvider;
 import com.vaadin.data.provider.QuerySortOrder;
 
 import java.math.BigInteger;
 import java.util.List;
 
-public interface ProductService {
+public interface ProductService extends DataProvider<Product, String> {
 
     List<Product> listAll();
 
     List<Product> listByPerson(Person person);
-
-    List<Product> listByPerson(String personIfFilter,
-                               int limit,
-                               int offset,
-                               List<QuerySortOrder> sortOrders);
 
     Product getById(BigInteger id);
 
@@ -26,5 +22,6 @@ public interface ProductService {
 
     void delete(Product product);
 
-    int count(String filter);
+    void setPerson(Person person);
+
 }

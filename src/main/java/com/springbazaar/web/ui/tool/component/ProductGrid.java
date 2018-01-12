@@ -1,9 +1,11 @@
 package com.springbazaar.web.ui.tool.component;
 
 import com.springbazaar.domain.Product;
-import com.springbazaar.web.ui.tool.ProductDataProvider;
+import com.springbazaar.service.ProductService;
 import com.vaadin.data.HasValue;
+import com.vaadin.data.provider.ConfigurableFilterDataProvider;
 import com.vaadin.icons.VaadinIcons;
+import com.vaadin.shared.ui.ValueChangeMode;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
@@ -20,10 +22,15 @@ import java.util.Locale;
 public class ProductGrid extends Grid<Product> {
     public static final String PRODUCT_CAPTION_COLUMN_ID = "ProductCaptionColumnId";
     public static final String PRODUCT_ID_COLUMN_ID = "ProductIdColumnId";
+    private ConfigurableFilterDataProvider<Product, Void, String> productProvider;
 
-    public ProductGrid(String caption) {
+    public ProductGrid(String caption, ProductService productService) {
         setSizeFull();
         setCaption(caption);
+
+        productProvider = productService.withConfigurableFilter();
+        setDataProvider(productProvider);
+
         setSelectionMode(Grid.SelectionMode.SINGLE);
 
         DecimalFormat dollarFormat = new DecimalFormat("$##,##0.00");
@@ -48,10 +55,10 @@ public class ProductGrid extends Grid<Product> {
 
         HeaderRow headerRow = appendHeaderRow();
         TextField captionFilter = getFilterField();
-        captionFilter.addValueChangeListener(this::onNameFilterTextChange);
         headerRow.getCell(PRODUCT_CAPTION_COLUMN_ID).setComponent(captionFilter);
 
         Label totalProductsLabel = new Label();
+        //TODO get dynamic count items
         totalProductsLabel.setValue("total: ");
         headerRow.getCell(PRODUCT_ID_COLUMN_ID).setComponent(totalProductsLabel);
     }
@@ -77,17 +84,22 @@ public class ProductGrid extends Grid<Product> {
         filter.setWidth("100%");
         filter.addStyleName(ValoTheme.TEXTFIELD_TINY);
         filter.setPlaceholder("Filter");
+        filter.setValueChangeMode(ValueChangeMode.LAZY);
+        filter.addValueChangeListener(e -> {
+            productProvider.setFilter(e.getValue());
+        });
+
         return filter;
     }
 
     //In-memory filtering text field
-    private void onNameFilterTextChange(HasValue.ValueChangeEvent<String> event) {
-        ProductDataProvider dataProvider = (ProductDataProvider) this.getDataProvider();
+//    private void onNameFilterTextChange(HasValue.ValueChangeEvent<String> event) {
+//        ProductDataProvider dataProvider = (ProductDataProvider) this.getDataProvider();
 //        dataProvider.setFilter(Product::getCaption, s -> caseInsensitiveContains(s, event.getValue()));
-    }
-
-    private Boolean caseInsensitiveContains(String where, String what) {
-        Locale locale = UI.getCurrent().getLocale();
-        return where.toLowerCase(locale).contains(what.toLowerCase(locale));
-    }
+//    }
+//
+//    private Boolean caseInsensitiveContains(String where, String what) {
+//        Locale locale = UI.getCurrent().getLocale();
+//        return where.toLowerCase(locale).contains(what.toLowerCase(locale));
+//    }
 }
