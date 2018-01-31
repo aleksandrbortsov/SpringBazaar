@@ -12,7 +12,6 @@ import com.vaadin.ui.Notification;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -96,8 +95,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    //TODO sort out
-    @Secured("ROLE_ADMIN")
     public void delete(User user) {
         userRepository.delete(user);
     }

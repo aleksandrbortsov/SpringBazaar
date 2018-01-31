@@ -18,7 +18,7 @@ public class WelcomeUI extends MainUI {
     public static final String NAME = "/welcome";
     private final Label loggedUsername = new Label("Username");
     private final LogoutLink logoutLink = new LogoutLink();
-    //    private ListDataProvider productProvider;
+    //    private ListDataProvider productProvider; - in memory data provider
     private final ProductService productService;
 
 

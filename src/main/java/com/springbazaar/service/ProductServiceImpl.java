@@ -10,8 +10,10 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +52,7 @@ public class ProductServiceImpl extends AbstractBackEndDataProvider<Product, Str
     }
 
     @Override
+    @PreAuthorize("hasRole('ROLE_SELLER')")
     public Product saveOrUpdate(Product product) {
         return productRepository.save(product);
     }
@@ -60,11 +63,14 @@ public class ProductServiceImpl extends AbstractBackEndDataProvider<Product, Str
     }
 
     @Override
+    //TODO sort out with SpEL
+    @PreAuthorize("product.person.user == authentication.principal")
     public void delete(Product product) {
         productRepository.delete(product);
     }
 
     @Override
+    @Transactional
     protected Stream<Product> fetchFromBackEnd(Query<Product, String> query) {
         if (getFilter(query).isEmpty()) {
             return productRepository.findAllByPerson(getPerson()).stream();
@@ -83,6 +89,7 @@ public class ProductServiceImpl extends AbstractBackEndDataProvider<Product, Str
     }
 
     @Override
+    @Transactional
     protected int sizeInBackEnd(Query<Product, String> query) {
         return productRepositoryCustom.countProducts(getPerson().getId(), getFilter(query));
     }

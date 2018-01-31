@@ -1,15 +1,13 @@
 package com.springbazaar.domain;
 
 import com.springbazaar.domain.util.type.RoleType;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigInteger;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -17,7 +15,7 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
-@ToString(exclude = "user")
+@ToString
 // TODO sort out with @EqualsAndHashCode(callSuper = false)
 public class Role implements Serializable, GrantedAuthority {
     @Id
@@ -28,11 +26,18 @@ public class Role implements Serializable, GrantedAuthority {
     @Column(name = "NAME", unique = true, nullable = false)
     private RoleType roleType;
 
+    private boolean isDefaultRole;
+
     @ManyToMany(mappedBy = "roles", fetch = FetchType.EAGER)
     private Set<User> user;
 
-//TODO add table and entity (example https://github.com/cuba-platform/cuba/blob/00ceaf9a022f4f997f29c4a2951c0ca9f7900fc0/modules/global/src/com/haulmont/cuba/security/entity/Permission.java)
-//    private List<Permission> permissions;
+    //TODO add table and entity
+    //(example https://github.com/cuba-platform/cuba/blob/00ceaf9a022f4f997f29c4a2951c0ca9f7900fc0/modules/global/src/com/haulmont/cuba/security/entity/Permission.java)
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "SB_ROLES_PERMISSIONS",
+            joinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "permission_id", referencedColumnName = "id"))
+    private Set<Permission> permissions;
 
     public Role(RoleType roleType) {
         this.roleType = roleType;
@@ -40,6 +45,6 @@ public class Role implements Serializable, GrantedAuthority {
 
     @Override
     public String getAuthority() {
-        return roleType.name();
+        return permissions.toString();
     }
 }

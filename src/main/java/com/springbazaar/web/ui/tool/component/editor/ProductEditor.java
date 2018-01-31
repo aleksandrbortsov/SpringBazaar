@@ -1,5 +1,6 @@
 package com.springbazaar.web.ui.tool.component.editor;
 
+import com.springbazaar.ContextAwarePolicyEnforcement;
 import com.springbazaar.domain.Person;
 import com.springbazaar.domain.Product;
 import com.springbazaar.domain.User;
@@ -28,11 +29,6 @@ import java.util.Calendar;
 public class ProductEditor extends MainUI {
     public static final String NAME = "/productEditor";
     private final Binder<Product> productBeanValidationBinder = new BeanValidationBinder<>(Product.class);
-
-    @Autowired
-    private ProductService productService;
-    @Autowired
-    private PersonService personService;
     private User user;
     private TextField productCaption = new TextField("Caption");
     private TextArea productDescription = new TextArea("Description");
@@ -41,7 +37,9 @@ public class ProductEditor extends MainUI {
     private Button productButton = new Button("ADD");
 
     @Autowired
-    public ProductEditor() {
+    public ProductEditor(ProductService productService,
+                         PersonService personService,
+                         ContextAwarePolicyEnforcement policy) {
         productCaption.setWidth(500, Unit.PIXELS);
 
         productBeanValidationBinder.forField(productCaption)
@@ -92,6 +90,7 @@ public class ProductEditor extends MainUI {
             }
             Person person = personService.getById(user.getPerson().getId());
             productForSave.setPerson(person);
+            policy.checkPermission(productForSave, "PERM_PRODUCT_CREATE");
             productService.saveOrUpdate(productForSave);
             getPage().setLocation(WelcomeUI.NAME);
         });

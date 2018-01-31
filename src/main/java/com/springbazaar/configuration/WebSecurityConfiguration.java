@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.EnableGlobalAuthentication;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -22,8 +23,9 @@ import javax.sql.DataSource;
 
 
 @Configuration
-@EnableWebSecurity
+@EnableGlobalAuthentication
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
+    private static final String REMEMBER_ME_APP_KEY = "rememberMeAppKey";
     private final DataSource dataSource;
     private final UserDetailsService userDetailsService;
 
@@ -55,12 +57,9 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().accessDeniedPage("/accessDenied")
                 .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint(LoginUI.NAME))
                 .and()
-                .rememberMe().rememberMeServices(rememberMeServices()).key("myAppKey")
+                .rememberMe().rememberMeServices(rememberMeServices()).key(REMEMBER_ME_APP_KEY)
                 .and()
-                .logout()
-                .logoutUrl("/logout")
-                .logoutSuccessUrl(LoginUI.NAME)
-                .permitAll()
+                .logout().logoutUrl("/logout").logoutSuccessUrl(LoginUI.NAME).permitAll()
                 .and()
                 .authorizeRequests()
                 .antMatchers("/VAADIN/**",
@@ -70,15 +69,15 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                         "/login/**",
                         "/error/**",
                         "/accessDenied/**",
-                        "/vaadinServlet/**").permitAll()
-                .antMatchers(RegistrationUI.NAME).permitAll()
+                        "/vaadinServlet/**",
+                        RegistrationUI.NAME).permitAll()
                 .anyRequest().authenticated();
     }
 
     @Bean
     public RememberMeServices rememberMeServices() {
-        return new PersistentTokenBasedRememberMeServices("myAppKey",
-                userDetailsService, persistentTokenRepository());
+        return new PersistentTokenBasedRememberMeServices(REMEMBER_ME_APP_KEY, userDetailsService,
+                persistentTokenRepository());
     }
 
     @Bean

@@ -2,9 +2,15 @@ package com.springbazaar;
 
 import lombok.extern.slf4j.Slf4j;
 import org.flywaydb.core.Flyway;
+import org.flywaydb.core.api.MigrationInfo;
+import org.flywaydb.core.api.MigrationInfoService;
+import org.flywaydb.core.api.callback.FlywayCallback;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
+import org.springframework.security.config.annotation.authentication.configuration.EnableGlobalAuthentication;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -31,22 +37,34 @@ public class Application {
 //        app.setBannerMode(Banner.Mode.OFF);
         ApplicationContext context = app.run(args);
 
-        setFlywayRollingState(context);
+//        setFlywayRollingState(context);
     }
 
     private static void setFlywayRollingState(ApplicationContext context) {
         List<String> activeProfiles = Arrays.asList(context.getEnvironment().getActiveProfiles());
         Flyway flyway = context.getBean(Flyway.class);
+
         String flywayState = getFlywayState(context, flyway);
 
-        if (flywayState.equals("update")) {
+            MigrationInfoService info = flyway.info();
+            MigrationInfo current = info.current();
+
+            String script = current.getScript();
+            script.toString();
+
+
+
+
+
+
             if (activeProfiles.contains("mysql")) {
                 flyway.setLocations(DB_MYSQL_UPDATE_LOCATION);
             } else {
                 flyway.setLocations(DB_POSTGRES_UPDATE_LOCATION);
             }
+
             flyway.migrate();
-        }
+
     }
 
     private static String getFlywayState(ApplicationContext context, Flyway flyway) {
