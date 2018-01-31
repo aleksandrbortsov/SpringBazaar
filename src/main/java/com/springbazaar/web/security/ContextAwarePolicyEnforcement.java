@@ -1,4 +1,4 @@
-package com.springbazaar;
+package com.springbazaar.web.security;
 
 import com.vaadin.ui.Notification;
 import lombok.extern.slf4j.Slf4j;

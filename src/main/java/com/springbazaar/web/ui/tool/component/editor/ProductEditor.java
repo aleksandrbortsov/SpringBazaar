@@ -1,6 +1,6 @@
 package com.springbazaar.web.ui.tool.component.editor;
 
-import com.springbazaar.ContextAwarePolicyEnforcement;
+import com.springbazaar.web.security.ContextAwarePolicyEnforcement;
 import com.springbazaar.domain.Person;
 import com.springbazaar.domain.Product;
 import com.springbazaar.domain.User;
