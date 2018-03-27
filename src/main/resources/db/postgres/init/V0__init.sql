@@ -11,6 +11,15 @@
       PRIMARY KEY (id)
   );
 
+  CREATE TABLE public.sb_login_attempts
+  (
+      id serial NOT NULL,
+      username text NOT NULL,
+      attempts text NOT NULL,
+      last_modified datetime NOT NULL,
+      PRIMARY KEY (id)
+  );
+
   CREATE TABLE public.sb_roles
   (
       id serial NOT NULL,
