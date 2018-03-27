@@ -10,6 +10,13 @@ CREATE TABLE `spring_bazaar`.`sb_users` (
   `credentials_non_expired` TINYINT(1) UNSIGNED NULL DEFAULT 1,
   PRIMARY KEY (`id`));
   
+CREATE TABLE `spring_bazaar`.`sb_login_attempts` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `username` VARCHAR(45) NOT NULL,
+  `attempts` varchar(45) NOT NULL,
+  `last_modified` datetime NOT NULL,
+  PRIMARY KEY (`id`));
+
 
   CREATE TABLE `spring_bazaar`.`sb_roles` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,

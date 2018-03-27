@@ -76,12 +76,12 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
     private void setProductCaptionSqlCondition(String productCaptionFilter, StringBuilder sql, List<Object> args) {
         if (!productCaptionFilter.isEmpty()) {
             sql.append("AND caption LIKE ? ");
-            productCaptionFilter = getPaternProductCaptionFilter(productCaptionFilter);
+            productCaptionFilter = getPatternProductCaptionFilter(productCaptionFilter);
             args.add(productCaptionFilter);
         }
     }
 
-    private String getPaternProductCaptionFilter(String productCaptionFilter) {
+    private String getPatternProductCaptionFilter(String productCaptionFilter) {
         return "%" + productCaptionFilter.toLowerCase().trim() + "%";
     }
 }

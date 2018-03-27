@@ -52,7 +52,7 @@ public class ProductServiceImpl extends AbstractBackEndDataProvider<Product, Str
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_SELLER')")
+    @PreAuthorize("hasPermission('PERM_PRODUCT_CREATE')")
     public Product saveOrUpdate(Product product) {
         return productRepository.save(product);
     }
@@ -64,7 +64,7 @@ public class ProductServiceImpl extends AbstractBackEndDataProvider<Product, Str
 
     @Override
     //TODO sort out with SpEL
-    @PreAuthorize("product.person.user == authentication.principal")
+    @PreAuthorize("hasRole('PERM_PRODUCT_CREATE')")
     public void delete(Product product) {
         productRepository.delete(product);
     }
